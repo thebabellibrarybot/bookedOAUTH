@@ -1,7 +1,6 @@
 import { 
     LoginButton,
     GoogleOAuth2Button, 
-    GitHubOAuth2Button,
     LogoutButton,
     LinkButton
 } from './loginButtons'
@@ -9,7 +8,6 @@ import {
 export { 
     LoginButton, 
     GoogleOAuth2Button, 
-    GitHubOAuth2Button,
     LogoutButton,
     LinkButton
 }

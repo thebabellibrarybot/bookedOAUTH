@@ -15,6 +15,9 @@ function Spinner() {
 }
 
 function UserInformation ({user}) {
+
+    console.log(user, "user")
+
     return (
         <div className='d-flex align-items-center mb-5'>
             {
@@ -37,8 +40,10 @@ function HomePage({handleLogout}) {
 
     useEffect(() => {
         let sid = localStorage.getItem("sid")
+        console.log(sid, "sid")
         sid = JSON.parse(sid)
         let { id, providerId } = sid
+        console.log(id, providerId, "id, providerId")
         usersController.getUserById(id, providerId)
             .then(({data}) => {
                 if (!data || data === "") {
@@ -57,6 +62,7 @@ function HomePage({handleLogout}) {
 
     const logout = () => {
         handleLogout()
+        console.log("logout")
         localStorage.removeItem("sid")
         navigate("/")
     }

@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const passport = require("passport")
 const cookieParser = require("cookie-parser")
+require('dotenv').config();
 
 var bodyParser = require("body-parser")
 const middlewares = require("./middlewares")

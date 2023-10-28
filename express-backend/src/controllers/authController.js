@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 function AuthController(database, logger) {
 
     this.database = database
@@ -46,13 +48,16 @@ function AuthController(database, logger) {
     }
 
     this.register = async (request, response) => {
+
+        console.log(request.body, "request.body from register")
+
         const user = request.body
 
         try {
             const createdUser = await this.database.createUser(user)
             const token = jwtUtil.generateJWT(user.id, user.email)
             response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
-            
+            console.log(`Session started for user [${user.email}] createdUser = ${createdUser}`)
             let authData = {
                 id: createdUser.id, 
                 providerId: null
@@ -72,28 +77,10 @@ function AuthController(database, logger) {
         }
     }
 
-    this.oauthGithubLogin = async (request, response) => {
-        const userProfile = {
-            id: request.user.id,
-            name: request.user._json.name || "",
-            login: request.user._json.login,
-            email: request.user._json.email,
-            picture: request.user._json.avatar_url,
-            provider: request.user.provider
-        }
-        let user = undefined
-        try {
-            user = await findOrCreateUserOAuth2(userProfile)
-        } catch(error)  {
-            this.logger.error(error)
-            return response.redirect(process.env.FAILED_LOGIN_REDIRECT)
-        }
-        const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id)
-        response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
-        response.redirect(process.env.SUCCESSFUL_LOGIN_REDIRECT)
-    }
-
     this.oauthGoogleLogin = async (request, response) => {
+
+        console.log(request.user, "request.user from oauthGoogleLogin")
+
         const userProfile = {
             id: request.user.id,
             name: request.user.displayName,
@@ -101,6 +88,8 @@ function AuthController(database, logger) {
             picture: request.user._json.picture || null,
             provider: request.user.provider 
         }
+
+        console.log(userProfile, "userProfile from oauthGoogleLogin")
 
         let user = undefined
         try {
@@ -142,6 +131,7 @@ function AuthController(database, logger) {
     const findOrCreateUserOAuth2 = async (userProfile) => {
 
         if (!userProfile.email) {
+            this.logger.error(userProfile)
             throw "required \"email\" field is missing"
         }
 

@@ -23,7 +23,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
         })
 
         if (!connectionString) {
-            throw new Error("Impossible to connect to MongoDB database: connection string not stabilished")
+            throw new Error(`${connectionString} is not a valid connection string`)
         }
 
         return mongoose.connect(connectionString)

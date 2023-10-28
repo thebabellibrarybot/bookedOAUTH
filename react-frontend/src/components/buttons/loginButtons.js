@@ -13,17 +13,6 @@ function GoogleOAuth2Button ({onClick}) {
     )
 }
 
-function GitHubOAuth2Button ({onClick}) {
-    return (
-        <BasicButton
-            IconElement={() => <i className="bi bi-github mx-2"></i>}
-            text={"Continue with GitHub"}
-            className={"btn-dark"}
-            onClick={onClick}
-        />
-    )
-}
-
 function LoginButton ({onClick, textContent}) {
     return (
         <BasicButton
@@ -62,7 +51,6 @@ function LinkButton ({previousText, linkText, route}) {
 export {
     LoginButton,
     GoogleOAuth2Button,
-    GitHubOAuth2Button,
     LogoutButton,
     LinkButton
 }

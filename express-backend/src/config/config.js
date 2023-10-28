@@ -12,7 +12,7 @@ function validateServerConfiguration() {
         process.env.BACK_HOST = DEFAULT_BACK_HOST
     }
     if (!isBackPortConfigured()) {
-        process.env.BACK_PORT = DEFAULT_BACK_PORT
+        process.env.BACK_HOST = DEFAULT_BACK_PORT
     }
 
     if (!isFrontHostConfigured()) {
@@ -50,11 +50,6 @@ function validateAuthConfiguration() {
     }
     logger.info("   ✅ JWT configured!")
 
-    // OAuth2.0 - GitHub Provider
-    checkGitHubConfigurationProperties()
-    isGitHubOAuth2ServiceConfigured()
-        ? logger.info("   ✅ GitHub OAuth 2.0 configured!")
-        : logger.error("   ❌ GitHub OAuth 2.0 not configured!")
     // OAuth2.0 - Google Provider
     checkGoogleConfigurationProperties()
     isGoogleOAuth2ServiceConfigured()
@@ -88,22 +83,10 @@ function checkGoogleConfigurationProperties() {
     !process.env.CLIENT_GOOGLE_CALLBACK_URL && logger.warn("   ❗️ Google Callback not established")
 }
 
-function checkGitHubConfigurationProperties() {
-    !process.env.GITHUB_AUTH_CLIENT_ID && logger.warn("   ❗️ GitHub Client ID not established")
-    !process.env.GITHUB_AUTH_CLIENT_SECRET && logger.warn("   ❗️ GitHub Client Secret not established")
-    !process.env.CLIENT_GITHUB_CALLBACK_URL && logger.warn("   ❗️ GitHub Callback not established")
-}
-
 function isGoogleOAuth2ServiceConfigured() {
     return process.env.GOOGLE_AUTH_CLIENT_ID
         && process.env.GOOGLE_AUTH_CLIENT_SECRET
         && process.env.CLIENT_GOOGLE_CALLBACK_URL
-}
-
-function isGitHubOAuth2ServiceConfigured() {
-    return process.env.GITHUB_AUTH_CLIENT_ID
-        && process.env.GITHUB_AUTH_CLIENT_SECRET
-        && process.env.CLIENT_GITHUB_CALLBACK_URL
 }
 
 function isJWTServiceConfigured() {
@@ -115,6 +98,5 @@ module.exports = {
     validateDatabaseConfiguration,
     validateAuthConfiguration,
     isGoogleOAuth2ServiceConfigured,
-    isGitHubOAuth2ServiceConfigured,
     isJWTServiceConfigured
-}
+};

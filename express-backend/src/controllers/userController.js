@@ -7,6 +7,8 @@ function UserController(database) {
     this.getUserById = (request, response) => {
         const id = request.params.id
         const providerId = request.query?.providerId
+
+        console.log('get user fired')
         
         this.database.getUserById(id)
             .then(user => {
@@ -29,20 +31,6 @@ function UserController(database) {
             .catch(err => {
                 response.status(CONST.httpStatus.CONFLICT).json({ error: err })
             })
-    }
-
-    //#region Auxiliar methods
-
-    const userToDTO = (user, providerId = null) => {
-        if (providerId) {
-            let { providers } = user
-            let providerInformation = providers.find(p => p.providerUserId === providerId)
-            user.picture = providerInformation.picture
-            user.login = providerInformation.loginName
-        }
-        delete user.providers
-        delete user.password
-        return user
     }
 
     //#endregion
