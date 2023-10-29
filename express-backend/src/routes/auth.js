@@ -37,6 +37,7 @@ if (isGoogleCondigured) {
 }
 
 if (isGoogleCondigured) {
+    console.log('fired oauth/google')
     passport.serializeUser(function(user, done) {
         done(null, user)
     })

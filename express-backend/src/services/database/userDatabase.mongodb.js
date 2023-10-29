@@ -4,6 +4,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
     const mongoose = require("mongoose")
     const connectionString = dbConnectionString
     const User = require("../../models/user")
+    const BookingFormInfo = require("../../models/bookingFormInfo")
 
     this.connect = () => {
 
@@ -81,6 +82,18 @@ function UserDatabaseMongoDB(dbConnectionString) {
         return User.findOne({ email: email })
             .then((user) => {
                 return user?.toJSON()
+            })
+    }
+
+    // first attempt at integrating bookingforminfo into the database
+    this.getBookingByUserID = (userId) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+
+        return BookingFormInfo.findOne({ adminId: userId })
+            .then((booking) => {
+                return booking?.toJSON()
             })
     }
 

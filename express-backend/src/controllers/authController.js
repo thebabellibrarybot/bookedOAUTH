@@ -11,6 +11,7 @@ function AuthController(database, logger) {
     const jwtUtil = require("../utils/jwt")
 
     this.getUserSession = (request, response) => {
+        console.log(request.cookies, "request.cookies from getUserSession")
         const jwtToken = request.cookies.jwt
         let authData = jwtUtil.decodeJWT(jwtToken)
         response.json({ sid : authData })
@@ -39,6 +40,7 @@ function AuthController(database, logger) {
             let authData = {
                 id: user.id
             }
+            console.log(authData, "authData from login")
             response.json({ sid: authData })
         } catch(error) {
             const message = `Imposible to login user: ${error}`
@@ -92,14 +94,20 @@ function AuthController(database, logger) {
         console.log(userProfile, "userProfile from oauthGoogleLogin")
 
         let user = undefined
+
         try {
+
             user = await findOrCreateUserOAuth2(userProfile)
+            console.log(user, 'userProfile, user from oauthGoogleLogin')
         } catch(error)  {
             this.logger.error(error)
+            console.log(error, "error from oauthGoogleLogin")
             return response.redirect(process.env.FAILED_LOGIN_REDIRECT)
         }
         const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id)
         response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
+        this.logger.info(`Session started for user [${user.email}]`)
+        this.logger.info(process.env.SUCCESSFUL_LOGIN_REDIRECT)
         response.redirect(process.env.SUCCESSFUL_LOGIN_REDIRECT)
     }
 
@@ -129,6 +137,8 @@ function AuthController(database, logger) {
     }
 
     const findOrCreateUserOAuth2 = async (userProfile) => {
+
+        console.log(userProfile, "userProfile from findOrCreateUserOAuth2")
 
         if (!userProfile.email) {
             this.logger.error(userProfile)
