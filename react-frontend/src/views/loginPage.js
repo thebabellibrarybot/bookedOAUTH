@@ -66,6 +66,7 @@ function LoginPage({handleLogin}) {
             setMessageError(error)
             return
         }
+        console.log("sid", sid, data, "onSuccessLogin")
         localStorage.setItem("sid", JSON.stringify(sid))
         console.log("Login successful, adding sid and navigating to home")
         handleLogin()

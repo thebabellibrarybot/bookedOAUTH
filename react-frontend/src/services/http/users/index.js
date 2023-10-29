@@ -2,8 +2,9 @@ import axios from "axios"
 import { CONST } from "config"
 
 
-export const getUserById = (id, providerId = null) => {
+const getUserById = (id, providerId = null) => {
     if (!id) {
+        console.log(id, "no id from getUserById")
         localStorage.removeItem("sid")
         throw "id cannot be null or undefined"
     }
@@ -16,4 +17,8 @@ export const getUserById = (id, providerId = null) => {
     }
 
     return axios.get(uri, { withCredentials: true })
+}
+
+export {
+    getUserById
 }

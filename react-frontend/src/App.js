@@ -6,7 +6,7 @@ import logo from "assets/logo.svg"
 function Footer() {
     return (
         <footer>
-            <small>Powered by ReactJS</small>
+            <small>Powered by Booked</small>
             <img src={logo} className="App-logo" alt="logo" />
         </footer>
     )
@@ -33,6 +33,7 @@ function App() {
                     <Route path="register" element={<RegisterPage/>} />
                     <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
                     <Route path="*" element={<h1>404 Not found</h1>} />
+                    <Route path="bookingform" element={<h1>Public Booking</h1>} />
                 </Routes>
             </BrowserRouter>
 

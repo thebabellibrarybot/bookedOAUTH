@@ -1,0 +1,30 @@
+@import "./colors";
+
+* {
+    margin: 0;
+}
+
+.app {
+  background-color: $blue-background;
+}
+.app {
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+p, h1 {
+    margin: 0;
+  }
+
+  .content {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 2px solid black;
+    z-index: 3;
+  }

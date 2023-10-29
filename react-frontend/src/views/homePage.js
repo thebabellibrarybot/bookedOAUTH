@@ -43,11 +43,14 @@ function HomePage({handleLogout}) {
         console.log(sid, "sid")
         sid = JSON.parse(sid)
         let { id, providerId } = sid
+
         console.log(id, providerId, "id, providerId")
+
         usersController.getUserById(id, providerId)
             .then(({data}) => {
+                console.log(data, "data from getUserById")
                 if (!data || data === "") {
-                    logout()
+                    console.log("No user found", data, "logging out")
                 }
                 console.log(data)
                 setUserInformation(data)

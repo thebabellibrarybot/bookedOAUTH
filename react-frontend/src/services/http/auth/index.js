@@ -5,6 +5,8 @@ import { CONST } from "config"
 
 export const registerUser = async (credentials) => {
 
+    console.log("credentials", credentials, 'registerUser')
+
     if (!credentials.fullname) {
         throw Error("Your full name is required")
     }
@@ -30,6 +32,9 @@ export const registerUser = async (credentials) => {
 }
 
 export const startWithCredentials = async (credentials) => {
+
+    console.log("credentials", credentials, 'startwithcredentials')
+
     if (!credentials.email) {
         throw "Enter a valid email"
     }
@@ -47,6 +52,8 @@ export const startWithCredentials = async (credentials) => {
 }
 
 export const startWithOAuth2 = (providerUrl) => {
+
+    console.log("providerUrl", providerUrl, 'startwithoauth2')
 
     let timer = null
     const authWindow = window.open(providerUrl)
