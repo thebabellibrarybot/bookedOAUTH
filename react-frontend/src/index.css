@@ -40,10 +40,6 @@ body {
   justify-content: center;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -57,10 +53,6 @@ h2 {
   text-align: center;
 }
 
-
-small {
-  color: dimgray
-}
 
 form {
   width: 300px

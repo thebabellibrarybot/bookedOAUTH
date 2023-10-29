@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios from 'axios'
+import { CONST } from 'config'
 
 const getUserBookingInfoByID = (id) => {
     if (!id) {
@@ -7,7 +8,7 @@ const getUserBookingInfoByID = (id) => {
         throw "id cannot be null or undefined"
     }
 
-    let uri = CONST.uri.resources.USERS + `/bookingInfo/${id}`
+    let uri = CONST.uri.resources.BOOKINGFORMINFO + `/${id}`
 
     return axios.get(uri, { withCredentials: true })
 }

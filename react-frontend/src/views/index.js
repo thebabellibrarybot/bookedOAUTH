@@ -4,6 +4,7 @@ import RegisterPage from './registerPage'
 import HomePage from './homePage'
 import SuccessLoginPage from './successLoginPage'
 import FailureLoginPage from './failureLoginPage'
+import BookingFormInfo from './bookingForm'
 
 
 export { 
@@ -11,5 +12,6 @@ export {
     RegisterPage, 
     HomePage, 
     SuccessLoginPage, 
-    FailureLoginPage
+    FailureLoginPage,
+    BookingFormInfo
 }

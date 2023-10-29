@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const RadioButtons = (props) => {
 
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState(null)
 
     const handleChange = (e) => {
-        console.log(e);
-        setSelected(e);
+        console.log(e)
+        setSelected(e)
     }
 
     return (
@@ -22,4 +22,4 @@ const RadioButtons = (props) => {
         </div>
     )
 }
-export default RadioButtons;
+export default RadioButtons

@@ -5,11 +5,13 @@ import {
     LinkButton
 } from './loginButtons'
 import RadioButtons from './radioButtons'
+import BasicButton from './common'
 
 export { 
     LoginButton, 
     GoogleOAuth2Button, 
     LogoutButton,
     LinkButton,
-    RadioButtons
+    RadioButtons,
+    BasicButton
 }

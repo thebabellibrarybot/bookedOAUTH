@@ -10,7 +10,8 @@ export const uri = {
         REGISTER: env.API_SERVER + "/register"
     },
     resources: {
-        USERS: env.API_SERVER + "/users/"
+        USERS: env.API_SERVER + "/users/",
+        BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo"
     },
     services: {
         OAUTH2_GOOGLE_STATUS: env.API_SERVER + "/login/google/status",

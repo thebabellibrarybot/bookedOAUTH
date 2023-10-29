@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { LogoutButton } from 'components/buttons'
-import { usersController } from 'services/http'
+import { LogoutButton, BasicButton } from 'components/buttons'
+import { usersController, openController } from 'services/http'
 import "./homePage.css"
 import { useNavigate } from 'react-router-dom'
-
+import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
 
 function Spinner() {
     return (
@@ -35,6 +35,7 @@ function UserInformation ({user}) {
 function HomePage({handleLogout}) {
 
     const [ userInformation, setUserInformation ] = useState(null)
+    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
 
     let navigate = useNavigate()
 
@@ -60,8 +61,19 @@ function HomePage({handleLogout}) {
                 logout()
             })
 
+        openController.getUserBookingInfoByID(id)
+            .then(({data}) => {
+                console.log(data, "data from getUserBookingInfoByID")
+                if (!data || data === "") {
+                    console.log("No booking form found", data, "logging out")
+                }
+                console.log(data)
+                setBookingFormInfo(data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
     }, [])
-
 
     const logout = () => {
         handleLogout()
@@ -79,6 +91,8 @@ function HomePage({handleLogout}) {
             <h1 className='mb-5'>Welcome!</h1>
 
             <UserInformation user={userInformation} />
+
+            {bookingFormInfo ? <BasicButton text={"Edit a Current Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton textContent={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
 
             <LogoutButton textContent={"Logout"} onClick={logout}/>
         </div>
