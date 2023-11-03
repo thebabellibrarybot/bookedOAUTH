@@ -13,6 +13,19 @@ const getUserBookingInfoByID = (id) => {
     return axios.get(uri, { withCredentials: true })
 }
 
+const postSchedule = (schedule) => {
+    if (!schedule) {
+        console.log(schedule, "no schedule from postSchedule")
+        throw "schedule cannot be null or undefined"
+    }
+
+    let uri = CONST.uri.resources.SCHEDULE
+
+    return axios.post(uri, schedule, { withCredentials: true })
+}
+
+
 export {
-    getUserBookingInfoByID
+    getUserBookingInfoByID,
+    postSchedule
 }

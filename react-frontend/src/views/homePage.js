@@ -82,6 +82,13 @@ function HomePage({handleLogout}) {
         navigate("/")
     }
 
+    const fire = () => {
+
+        openController.postSchedule("schedule")
+
+    }
+
+
     if (!userInformation) {
         return <Spinner />
     }
@@ -92,7 +99,11 @@ function HomePage({handleLogout}) {
 
             <UserInformation user={userInformation} />
 
-            {bookingFormInfo ? <BasicButton text={"Edit a Current Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton textContent={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
+            <BasicButton text = {"fire postBooking"} onClick={fire}/>
+
+            {bookingFormInfo ? <BasicButton text={"Edit a Current Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton text={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
+
+            <BasicButton text={"View Calendar"} onClick={() => navigate("/mycalendar")}/>
 
             <LogoutButton textContent={"Logout"} onClick={logout}/>
         </div>

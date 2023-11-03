@@ -11,7 +11,8 @@ export const uri = {
     },
     resources: {
         USERS: env.API_SERVER + "/users/",
-        BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo"
+        BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo",
+        SCHEDULE: env.API_SERVER + "/schedule/:id"
     },
     services: {
         OAUTH2_GOOGLE_STATUS: env.API_SERVER + "/login/google/status",
