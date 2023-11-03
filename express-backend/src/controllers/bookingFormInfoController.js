@@ -6,32 +6,41 @@ function BookingFormInfo(database) {
 
     this.getBookingByUserID = (request, response) => {
         const id = request.params.id
-
-        console.log('get user booking fired', id)
         
         this.database.getBookingByUserID(id)
             .then(user => {
-                console.log(user, "user from getBookingByUserID")
                 response.json(user)
             })
             .catch(err => {
                 response.status(CONST.httpStatus.NOT_FOUND).json({ error: err })
             })
-
     }
 
-  /*  this.deleteUserById = (request, response) => {
-        const id = request.params.id
-        this.database.deleteUserById(id)
-            .then((deletedUser) => {
-                let dto = userToDTO(deletedUser)
-                response.json(dto)
-            })
-            .catch(err => {
-                response.status(CONST.httpStatus.CONFLICT).json({ error: err })
-            })
-    } */
+    this.postBookingByUserID = (request, response) => {
 
+        const id = request.params.id
+        const booking = request.body
+
+        this.database.getBookingByUserID(id)
+            .then(user => {
+                if (!user) {
+                    const message = "UserBookingForm not found"
+                    this.logger.info(`Bookingform not found for [${id}, ${user}]. ${message}`)
+                    this.logger.info(`Bookingform created for user [${booking.adminInfo.displayName}]`)
+                    this.database.postBookingByUserID(id, booking)
+                } else {
+                    const message = "UserBookingForm already exists"
+                    this.logger.info(`Booking form found for [${id}, ${user}]. ${message}`)
+                    this.logger.info(`Booking form updated for user [${booking.adminInfo.displayName}]`)
+                    this.database.putBookingByUserID(id, booking)
+                }
+                }
+            )
+            .catch(err => {
+                response.status(CONST.httpStatus.NOT_FOUND).json({ error: err })
+            }
+        )
+    }
 }
 
 
@@ -39,9 +48,3 @@ const database = require("../services/database")
 const bookingFormInfoController = new BookingFormInfo(database)
 
 module.exports = bookingFormInfoController
-
-
-
-
-
-

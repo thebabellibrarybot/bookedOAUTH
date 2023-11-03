@@ -6,10 +6,7 @@ function UserController(database) {
 
     this.getUserById = (request, response) => {
         const id = request.params.id
-        const providerId = request.query?.providerId
-
-        console.log('get userByID fired', id, providerId)
-        
+        const providerId = request.query?.providerId        
         this.database.getUserById(id)
             .then(user => {
                 let dto = userToDTO(user, providerId)
@@ -36,7 +33,6 @@ function UserController(database) {
     //#region Auxiliar methods
 
     const userToDTO = (user, providerId = null) => {
-        console.log(user, "user from userToDTO")
         if (providerId) {
             let { providers } = user
             let providerInformation = providers.find(p => p.providerUserId === providerId)

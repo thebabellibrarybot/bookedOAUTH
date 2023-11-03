@@ -1,4 +1,6 @@
-require('dotenv').config();
+require('dotenv').config()
+const axios = require('axios')
+const { OAuth2Client } = require('google-auth-library');
 
 function AuthController(database, logger) {
 
@@ -9,9 +11,8 @@ function AuthController(database, logger) {
     const bcrypt = require("bcrypt")
     const DuplicatedEmailError = require("../utils/customErrors")
     const jwtUtil = require("../utils/jwt")
-
+    
     this.getUserSession = (request, response) => {
-        console.log(request.cookies, "request.cookies from getUserSession")
         const jwtToken = request.cookies.jwt
         let authData = jwtUtil.decodeJWT(jwtToken)
         response.json({ sid : authData })
@@ -40,7 +41,6 @@ function AuthController(database, logger) {
             let authData = {
                 id: user.id
             }
-            console.log(authData, "authData from login")
             response.json({ sid: authData })
         } catch(error) {
             const message = `Imposible to login user: ${error}`
@@ -51,7 +51,6 @@ function AuthController(database, logger) {
 
     this.register = async (request, response) => {
 
-        console.log(request.body, "request.body from register")
 
         const user = request.body
 
@@ -59,7 +58,6 @@ function AuthController(database, logger) {
             const createdUser = await this.database.createUser(user)
             const token = jwtUtil.generateJWT(user.id, user.email)
             response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
-            console.log(`Session started for user [${user.email}] createdUser = ${createdUser}`)
             let authData = {
                 id: createdUser.id, 
                 providerId: null
@@ -79,32 +77,34 @@ function AuthController(database, logger) {
         }
     }
 
+    // this sends open and nonharmful user info from google provider to frontend and saves accessToken in user's session on server-side
     this.oauthGoogleLogin = async (request, response) => {
 
-        console.log(request.user, "request.user from oauthGoogleLogin")
-
+        // might want to eventually save this as a cookie and add it to a users database // add a function to update the tokens
         const userProfile = {
             id: request.user.id,
             name: request.user.displayName,
-            email: request.user._json.email,
-            picture: request.user._json.picture || null,
-            provider: request.user.provider 
+            email: request.user.email,
+            picture: request.user.picture || null,
+            provider: request.user.provider,
+            accessToken: request.session.passport.user.accessToken,
+            refreshToken: request.session.passport.user.refreshToken
         }
 
-        console.log(userProfile, "userProfile from oauthGoogleLogin")
+        // set userProfile to session info should actually save this as a cookie in the session with jwt....
+        request.session.userProfile = userProfile;
 
         let user = undefined
 
         try {
-
+            console.log(userProfile, "userProfile from oauthGoogleLogin")
             user = await findOrCreateUserOAuth2(userProfile)
-            console.log(user, 'userProfile, user from oauthGoogleLogin')
         } catch(error)  {
             this.logger.error(error)
             console.log(error, "error from oauthGoogleLogin")
             return response.redirect(process.env.FAILED_LOGIN_REDIRECT)
         }
-        const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id)
+        const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id, userProfile.accessToken, userProfile.refreshToken)
         response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
         this.logger.info(`Session started for user [${user.email}]`)
         this.logger.info(process.env.SUCCESSFUL_LOGIN_REDIRECT)
@@ -138,8 +138,6 @@ function AuthController(database, logger) {
 
     const findOrCreateUserOAuth2 = async (userProfile) => {
 
-        console.log(userProfile, "userProfile from findOrCreateUserOAuth2")
-
         if (!userProfile.email) {
             this.logger.error(userProfile)
             throw "required \"email\" field is missing"
@@ -149,23 +147,26 @@ function AuthController(database, logger) {
         if (!user) {
             let registeredUser = await this.database.getUserByEmail(userProfile.email)
             if (!registeredUser) {
+                console.log(userProfile, "userProfile from findOrCreateUserOAuth2")
                 let newUser = {
                     fullname: userProfile.name,
                     email: userProfile.email,
                 }  
-                this.logger.info("Creating new user...")
+                this.logger.info(`Creating new user... ${newUser.email, newUser.email, userProfile.email}`)
                 registeredUser = await this.database.createUser(newUser)
             }
 
             let { providers = [] } = registeredUser
             let oauth2ProviderInformation = providers.find(provider => provider.providerUserId == registeredUser.id && provider.providerName == userProfile.provider)
+            const token = jwtUtil.generateJWT(userProfile.refreshToken)
             if (!oauth2ProviderInformation) {
                 let oauth2UserInformation = {
                     userId: registeredUser.id,
                     loginName: userProfile.login || "",
                     providerUserId: userProfile.id,
                     providerName: userProfile.provider,
-                    picture: userProfile.picture || ""
+                    picture: userProfile.picture || "",
+                    refreshToken: token
                 }
                 this.logger.info(`Register user with id "${registeredUser.id}" from ${userProfile.provider} OAuth 2.0`)
                 oauth2ProviderInformation = await this.database.addProviderUser(oauth2UserInformation)

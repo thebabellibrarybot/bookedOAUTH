@@ -85,18 +85,6 @@ function UserDatabaseMongoDB(dbConnectionString) {
             })
     }
 
-    // first attempt at integrating bookingforminfo into the database
-    this.getBookingByUserID = (userId) => {
-        if (!userId) {
-            throw "userId cannot be null or undefined"
-        }
-
-        return BookingFormInfo.findOne({ adminId: userId })
-            .then((booking) => {
-                return booking?.toJSON()
-            })
-    }
-
     this.getUserByProviderId = (providerUserId) => {
         if (!providerUserId) {
             throw "providerUserId cannot be null or undefined"
@@ -120,7 +108,10 @@ function UserDatabaseMongoDB(dbConnectionString) {
         if (!user.providerName) {
             throw "providerName fields cannot be null or undefined"
         }
-        let { userId, providerUserId, providerName, loginName = "", picture = "" } = user
+        if (!user.refreshToken) {
+            throw "refreshToken fields cannot be null or undefined"
+        }
+        let { userId, providerUserId, providerName, loginName = "", picture = "", refreshToken } = user
 
         return User.findByIdAndUpdate(userId, {
             $push: {
@@ -128,7 +119,8 @@ function UserDatabaseMongoDB(dbConnectionString) {
                     providerUserId: providerUserId,
                     providerName: providerName,
                     loginName: loginName,
-                    picture: picture
+                    picture: picture,
+                    refreshToken: refreshToken
                 }
             }}, {
             new: true
@@ -142,6 +134,53 @@ function UserDatabaseMongoDB(dbConnectionString) {
         return User.find({})
             .then((users) => {
                 return users
+            })
+    }
+
+    // first attempt at integrating bookingforminfo into the database
+    this.getBookingByUserID = (userId) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+
+        return BookingFormInfo.findOne({ adminId: userId })
+            .then((booking) => {
+                return booking?.toJSON()
+            })
+    }
+
+    this.postBookingByUserID = (userId, booking) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+        return BookingFormInfo.create(booking)
+            .then((booking) => {
+                return booking?.toJSON()
+            })
+    }
+    
+    this.putBookingByUserID = (userId, booking) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+
+        return BookingFormInfo.findOneAndUpdate({ adminId: userId }, booking, { new: true })
+            .then((booking) => {
+                return booking?.toJSON()
+            })
+    }
+
+    this.deleteBookingByUserID = (userId) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+
+        return BookingFormInfo.findOneAndDelete({ adminId: userId })
+            .then((deletedBooking) => {
+                if (!deletedBooking) {
+                    throw "Booking not found"
+                }
+                return deletedBooking?.toJSON()
             })
     }
 }

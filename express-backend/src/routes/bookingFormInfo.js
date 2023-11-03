@@ -4,7 +4,7 @@ const bookingFormInfoController = require("../controllers/bookingFormInfoControl
 
 router.get("/bookingforminfo/:id", bookingFormInfoController.getBookingByUserID)
 //router.delete("/bookingforminfo/:id", userController.deleteUserById)
-//router.post("/bookingforminfo/:id", userController.createBookingFormInfo)
+router.post("/bookingforminfo/:id", bookingFormInfoController.postBookingByUserID)
 //router.put("/bookingforminfo/:id", userController.updateBookingFormInfo)
 
 module.exports = router

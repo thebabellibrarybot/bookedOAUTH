@@ -8,15 +8,29 @@ const googleCallbackURL = `http://${process.env.BACK_HOST}:${process.env.BACK_PO
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy
 
-const googleProvider = new GoogleStrategy({
+const googleProvider = new GoogleStrategy(
+  {
     clientID: process.env.GOOGLE_AUTH_CLIENT_ID,
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRET,
-    callbackURL: googleCallbackURL
-},
-(accessToken, refreshToken, profile, done) => {
-    return done(null, profile)
-}
-)
+    callbackURL: googleCallbackURL,
+    accessType: "offline",
+    prompt: "consent",
+    refreshToken: true,
+  },
+  (accessToken, refreshToken, profile, done) => {
+    // Store the accessToken and refreshToken in your user profile data
+    const userProfile = {
+      id: profile.id,
+      name: profile.displayName,
+      email: profile._json.email,
+      picture: profile._json.picture || null,
+      provider: "google",
+      accessToken: accessToken,
+      refreshToken: refreshToken
+    };
+    
+    return done(null, userProfile);
+  }
+);
 
-
-module.exports = googleProvider
+module.exports = googleProvider;

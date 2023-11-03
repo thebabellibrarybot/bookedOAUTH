@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const authController = require("../controllers/authController")
+const authSchedController = require("../controllers/authSchedController")
 const middlewares = require("../middlewares")
 
 //#region Basic user login and register
@@ -25,11 +26,20 @@ router.get("/login/google/status", (request, response) => {
 })
 
 // Google
+// this is where i should be able to get and set access / refresh tokens in my session
 if (isGoogleCondigured) {
     const googleProvider = require("../services/auth/oauth2Google")
     passport.use(googleProvider)
-    router.get("/login/google", passport.authenticate("google", { scope: ["profile", "email"] }))
-    console.log('fired oauth/google/callback')
+    router.get("/login/google", passport.authenticate("google", { 
+        scope: [
+            "profile",
+            "email",
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/gmail.send"
+        ],
+        accessType: 'offline', // Request a refresh token
+        prompt: 'consent'
+    }))
     router.get("/oauth/google/callback",
         passport.authenticate("google"),
         authController.oauthGoogleLogin
@@ -45,7 +55,11 @@ if (isGoogleCondigured) {
         done(null, user)
     })
     console.log('fired oauth/user')
+
     router.get("/oauth/user", middlewares.isUserAuthenticated, authController.getUserSession)
+
+    router.post("/schedule/:id", middlewares.isUserAuthenticated, authSchedController.postBookingByUserID)
+    //router.post("/webhook", middlewares.isUserAuthenticated, authWebHookController.postCalendarInfo)
 }
 
 //#endregion

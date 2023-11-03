@@ -3,6 +3,7 @@ const cors = require("cors")
 const passport = require("passport")
 const cookieParser = require("cookie-parser")
 require('dotenv').config();
+const session = require("express-session")
 
 var bodyParser = require("body-parser")
 const middlewares = require("./middlewares")
@@ -18,6 +19,13 @@ app.use(bodyParser.json())
 app.use(express.json())
 app.use(cookieParser())
 app.use(passport.initialize())
+
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+}));
 
 
 app.use(middlewares.requestLogger)
