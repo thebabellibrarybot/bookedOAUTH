@@ -104,7 +104,7 @@ function AuthController(database, logger) {
             console.log(error, "error from oauthGoogleLogin")
             return response.redirect(process.env.FAILED_LOGIN_REDIRECT)
         }
-        const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id, userProfile.accessToken, userProfile.refreshToken)
+        const token = jwtUtil.generateJWT(user.id, user.email, userProfile.id)
         response.cookie("jwt", token, { httpOnly: true, maxAge: CONST.maxAgeCookieExpired })
         this.logger.info(`Session started for user [${user.email}]`)
         this.logger.info(process.env.SUCCESSFUL_LOGIN_REDIRECT)
