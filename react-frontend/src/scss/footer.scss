@@ -1,0 +1,15 @@
+@import "./colors";
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    img {
+        width: 100px;
+        height: auto;
+    }
+    svg {
+        height: 100px;
+    }
+}

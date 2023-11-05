@@ -5,9 +5,6 @@
 }
 
 .app {
-  background-color: $blue-background;
-}
-.app {
   min-width: 100vw;
   min-height: 100vh;
 }
@@ -25,6 +22,26 @@ p, h1 {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    border: 2px solid black;
     z-index: 3;
   }
+
+// WildBackground.scss
+
+.wild-background {
+  background: linear-gradient(135deg, #00B4DB, #7800b0, #00B4DB, #5f13c9);
+  background-size: 400% 400%; // Control the size of the gradient effect
+  animation: gradientAnimation 100s linear infinite; // Create an animation
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}
+

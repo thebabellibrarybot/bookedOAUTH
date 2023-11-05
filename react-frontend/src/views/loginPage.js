@@ -90,12 +90,6 @@ function LoginPage({handleLogin}) {
 
             { isGoogleAvailable && <GoogleOAuth2Button onClick={startWithGoogle} /> }
 
-            { (isGoogleAvailable) && <Separator /> }
-
-            <CredentialsLoginForm 
-                onSubmit={startWithEmail}
-                messageError={messageError}
-            />
             <LinkButton route={"/register"} previousText="Don´t have an account?" linkText="Sign up"/>
         </section>
     )

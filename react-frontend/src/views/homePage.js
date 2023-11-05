@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { LogoutButton, BasicButton } from 'components/buttons'
 import { usersController, openController } from 'services/http'
-import "./homePage.css"
 import { useNavigate } from 'react-router-dom'
 import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
 
@@ -108,7 +107,7 @@ function HomePage({handleLogout}) {
             <LogoutButton textContent={"Logout"} onClick={logout}/>
         </div>
     )
-}
+} 
 
 
 export default HomePage

@@ -10,11 +10,11 @@ const RadioButtons = (props) => {
     }
 
     return (
-        <div>
+        <div className='radio-selector'>
             <h3>{props.header}</h3>
             {props.arr.map((item, index) => {
                 return (
-                    <div key = {index} onClick = {() => handleChange(item)}>
+                    <div className='radio-button' key = {index} onClick = {() => handleChange(item)}>
                         <p className={item === selected ? 'selected' : 'unselected'}>{item}</p>
                     </div>
                 )

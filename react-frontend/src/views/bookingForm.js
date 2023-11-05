@@ -3,6 +3,8 @@ import { RadioButtons } from 'components/buttons'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
+import { MdLocationPin } from "react-icons/md"
+
 //import useBookingFormInfo from '../hooks/useBookingFormInfo'
 
 
@@ -66,7 +68,9 @@ const BookingFormInfo = () => {
     
     {
         const headerStyle = {
-            backgroundImage: `url(${bookingFormInfo.adminInfo.backgroundImage})`
+            backgroundImage: `url(${bookingFormInfo.adminInfo.backgroundImage})`,
+            backgroundSize: '100% auto',
+            backgroundPosition: 'center',
         }
 
         console.log(bookingFormInfo, 'bookingFormInfo from bookingForm.js')
@@ -76,7 +80,7 @@ const BookingFormInfo = () => {
             <div className='content'>
 
                 <div className="form-banner" style = {headerStyle}>
-                    {bookingFormInfo.adminInfo.nameImage ? <img src = {bookingFormInfo.adminInfo.nameImage} alt = 'nameImage' id = 'nameImage'></img> : <h1>{bookingFormInfo.adminInfo.displayName}</h1>}
+                    {bookingFormInfo.adminInfo.nameImage ? <img src = {bookingFormInfo.adminInfo.nameImage} alt = 'nameImage'></img> : <h1>{bookingFormInfo.adminInfo.displayName}</h1>}
                 </div>
 
                 <div className="form-header">
@@ -85,11 +89,14 @@ const BookingFormInfo = () => {
                     <div className='form-bio'>
                         <h3>{bookingFormInfo.adminInfo.displayName}</h3>
                         <div style = {{display: 'flex'}}>
-                            <p>location icon </p>
+                            <MdLocationPin className='icon-sm'/>
                             <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
                         </div>
-                        <p>{bookingFormInfo.adminInfo.bio}</p>
                     </div>
+                </div>
+
+                <div className='form-header'>
+                    <p>{bookingFormInfo.adminInfo.bio}</p>
                 </div>
 
                 <div className="form-header form-grid">

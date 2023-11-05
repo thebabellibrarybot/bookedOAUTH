@@ -49,7 +49,7 @@ function ImageGrid(props) {
                         key={index}
                         className={index === selected ? "image-grid-item-selected" : "image-grid-item"}
                         onClick={() => setSelected(index)} // Pass a function to setSelected
-                    >
+                    > 
                         <img src={imageObject.ImageURL} alt={imageObject} />
                         <p>{imageObject.imageName ? imageObject.imageName : null}</p>
                         <p>{imageObject.imageInfo ? imageObject.imageInfo : null}</p>
@@ -57,14 +57,9 @@ function ImageGrid(props) {
                 ))}
             </div>
 
-            <div>
-                <div className="image-grid-item">
-                    <button onClick={handlePreviousPage}>Previous Page</button>
-                </div>
-                
-                <div className="image-grid-item">
-                    <button onClick={handleNextPage}>Next Page</button>
-                </div>
+            <div className="gridpage">
+                <p onClick={handlePreviousPage}>Previous Page</p>
+                <p onClick={handleNextPage}>Next Page</p>
             </div>
         </>
     )

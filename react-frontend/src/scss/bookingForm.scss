@@ -2,9 +2,10 @@
 
 .form-banner {
     position: relative;
-    width: 100%;
+    width: 80%;
     height: 15vh;
     z-index: 1;
+    margin-top: 2.5%;
     img {
         position: relative;
         max-height: 30%;
@@ -41,12 +42,13 @@
         overflow-y: scroll;
         padding: 10px;
         border: 1px solid red;
+        text-align: left;
     }
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    grid-template-columns: 1fr 1fr; 
     grid-gap: 10px;
     p {
         padding: 0px;

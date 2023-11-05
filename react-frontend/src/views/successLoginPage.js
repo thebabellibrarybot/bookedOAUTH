@@ -1,5 +1,4 @@
 import React from 'react'
-import "./successLoginPage.css"
 
 function SuccessLoginPage(props) {
 

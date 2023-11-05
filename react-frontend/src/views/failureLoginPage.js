@@ -1,7 +1,5 @@
 import React from 'react'
 
-import "./failureLoginPage.css"
-
 function FailureLoginPage(props) {
 
     setTimeout(() => {
