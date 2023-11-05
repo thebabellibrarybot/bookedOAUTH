@@ -24,8 +24,20 @@ const postSchedule = (schedule) => {
     return axios.post(uri, schedule, { withCredentials: true })
 }
 
+const sendBookingEmail = (email) => {
+    if (!email) {
+        console.log(email, "no email from sendBookingEmail")
+        throw "email cannot be null or undefined"
+    }
+
+    let uri = CONST.uri.resources.SENDBOOKINGEMAIL
+
+    return axios.post(uri, email, { withCredentials: true })
+}
+
 
 export {
     getUserBookingInfoByID,
-    postSchedule
+    postSchedule,
+    sendBookingEmail,
 }

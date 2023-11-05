@@ -4,22 +4,32 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
 import { MdLocationPin } from "react-icons/md"
-
-//import useBookingFormInfo from '../hooks/useBookingFormInfo'
-
+import { BasicButton } from 'components/buttons'
 
 const BookingFormInfo = () => {
 
     const { id } = useParams('prac')
-
-    // get request to find all form info for this link
     const [bookingFormInfo, setBookingFormInfo] = useState(null)
+    const [userEntry, setUserEntry] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        date: '',
+        time: '',
+        message: '',
+        image: [],
+        size: '',
+        waiver: false,
+    })
+    const [isSubmitted, setIsSubmitted] = useState(false)
+    const [activeAvailableTimes, setActiveAvailableTimes] = useState(null)
+
+    // effect that loads the booking form info from the database
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await openController.getUserBookingInfoByID(id)
                 if (res) {
-                    console.log(res.data, 'res from bookingForm.js')
                     setBookingFormInfo(res.data)
                 }
             } catch (error) {
@@ -29,19 +39,6 @@ const BookingFormInfo = () => {
         fetchData()
     }, [id, setBookingFormInfo])
 
-
-    const [userEntry, setUserEntry] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        message: '',
-    })
-
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const [activeAvailableTimes, setActiveAvailableTimes] = useState(null)
-
     // Function to handle changes in the input fields
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -50,14 +47,23 @@ const BookingFormInfo = () => {
             [name]: value,
         })
     }
+
     // function to handle selection of a date and filter for available times (google API req)
     const handleAvailableTimes = (e) => {
         const {name, value} = e
     }
 
+    // function to handle submission of the form
     const handleSubmit = (e) => {
         e.preventDefault()
         setIsSubmitted(true)
+    }
+
+    // prac function to handle submission of the form
+    const fire = () => {
+
+        openController.sendBookingEmail("schedule")
+
     }
 
     if (bookingFormInfo === null) {
@@ -72,9 +78,6 @@ const BookingFormInfo = () => {
             backgroundSize: '100% auto',
             backgroundPosition: 'center',
         }
-
-        console.log(bookingFormInfo, 'bookingFormInfo from bookingForm.js')
-
         return (
 
             <div className='content'>
@@ -164,13 +167,19 @@ const BookingFormInfo = () => {
                 </div>
 
                 <div className='form-body'>
-                    <button>submit booking / booking and payment</button>
+                    
+                    <BasicButton text = {"fire postBooking"} onClick={fire}/>
+
                 </div>
             </div>
-
-
         )
     }
 }
 
 export default BookingFormInfo
+
+
+/*
+submit will send an email to the user with their request, the reciept, a link to the calendar appointment, and a link to the venmo deposit
+submit will also send an email to the admin with the user request, the reciept, a link to the calendar appointment and a approve or deny button and the users instagram acct and phone number
+*/

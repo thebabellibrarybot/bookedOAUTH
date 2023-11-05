@@ -5,8 +5,6 @@ function ImageGrid(props) {
     const flashImages = props.flashImages
     const customOptions = props.customOptions
 
-    console.log(flashImages, 'flashImages from imageGrid.js', props)
-
     // State to track the currently displayed images and the selected image
     const [currentImages, setCurrentImages] = useState(flashImages.slice(0, 8))
     const [currentPage, setCurrentPage] = useState(1)

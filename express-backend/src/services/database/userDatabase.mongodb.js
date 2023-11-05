@@ -5,6 +5,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
     const connectionString = dbConnectionString
     const User = require("../../models/user")
     const BookingFormInfo = require("../../models/bookingFormInfo")
+    const Schedule = require("../../models/schedule")
 
     this.connect = () => {
 
@@ -33,7 +34,6 @@ function UserDatabaseMongoDB(dbConnectionString) {
     this.close = () => {
         return mongoose.connection.close()
     }
-
 
     this.createUser = (user) => {
         if (!user) {
@@ -182,6 +182,25 @@ function UserDatabaseMongoDB(dbConnectionString) {
                 }
                 return deletedBooking?.toJSON()
             })
+    }
+
+    // schedule database handling functions
+    this.addBookingSchedById = (userId, booking) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+        if (!booking) {
+            throw "booking cannot be null or undefined"
+        }
+        return Schedule.create(userId, {
+            $push: {
+                booking: booking
+            }}, {
+            new: true
+        }
+        ).then((savedBooking) => {
+            return savedBooking?.toJSON()
+        })
     }
 }
 
