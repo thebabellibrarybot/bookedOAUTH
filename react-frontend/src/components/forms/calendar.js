@@ -7,22 +7,43 @@ const MyCalendar = ({bookingFormInfo}) => {
 
     const today = new Date()
     const [date, setDate] = useState(today)
-    const [reacurringUnavailable, setReacurringUnavailable] = useState(false)
+    console.log(bookingFormInfo.calendarInfo, 'bookingFormInfo.calendarInfo from MyCalendar')
+    const blockedWeekDates = bookingFormInfo.calendarInfo.blockedWeekDates
     const [viewTimes, setViewTimes] = useState(false)
-    const [availableTimes, setAvailableTimes] = useState(null)
+    const [bookedTimes, setBookedTimes] = useState(null)
+    const currentlyBooked = bookingFormInfo.calendarInfo.currentlyBooked
 
     function isDateDisabled(date) {
-        return date < today
+
+        if (date < today) {
+            return true
+        }
+
+        const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' }).toLowerCase()
+        if (blockedWeekDates.includes(dayOfWeek)) {
+            return true
+        }
+
+        return false
     }
 
     const handleDateChange = (date) => {
-        console.log('Selected Date:', date)
+        const curDate = String(date).split('T')[0]
         setViewTimes(true)
-        setDate(date)
+        let availableTimes = []
+        
+        currentlyBooked.forEach((item) => {
+            if (item.date === curDate) {
+                availableTimes.push(item.time)
+            }
+        })
+
+        setBookedTimes(availableTimes)
+        console.log(availableTimes, 'availableTimes from handleDateChange', curDate, 'curDate from handleDateChange', currentlyBooked, 'currentlyBooked from handleDateChange')
     }
 
     return (
-        <div className="form-line" styles = {{width: '100%', margin: '0'}}>
+        <div className="form-line form-header" styles = {{width: '100%', margin: '0'}}>
             <Calendar
                 onChange={handleDateChange}
                 value={date}
@@ -31,7 +52,7 @@ const MyCalendar = ({bookingFormInfo}) => {
 
             <br></br>
 
-            {viewTimes ? <Radio arr = {bookingFormInfo.tattooInfo.availableTimes} header = 'Select a time:'/> : 'hidden times'}
+            {viewTimes ? <Radio arr = {bookingFormInfo.tattooInfo.availableTimes} booked = {bookedTimes} header = 'Select a time:'/> : 'hidden times'}
         </div>
     )
 }

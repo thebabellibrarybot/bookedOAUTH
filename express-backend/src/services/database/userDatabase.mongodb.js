@@ -185,21 +185,14 @@ function UserDatabaseMongoDB(dbConnectionString) {
     }
 
     // schedule database handling functions
-    this.addBookingSchedById = (userId, booking) => {
-        if (!userId) {
-            throw "userId cannot be null or undefined"
-        }
+    this.addBookingSchedById = (booking) => {
         if (!booking) {
             throw "booking cannot be null or undefined"
         }
-        return Schedule.create(userId, {
-            $push: {
-                booking: booking
-            }}, {
-            new: true
-        }
-        ).then((savedBooking) => {
-            return savedBooking?.toJSON()
+        console.log(booking, 'booking')
+        return Schedule.create(booking)
+        .then ((savedSchedule) => {
+            return savedSchedule?.toJSON()
         })
     }
 }

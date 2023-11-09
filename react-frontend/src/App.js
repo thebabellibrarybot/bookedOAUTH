@@ -44,7 +44,7 @@ function App() {
                             <Route path="register" element={<RegisterPage/>} />
                             <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
                             <Route path="*" element={<h1>404 Not found</h1>} />
-                            <Route path="bookingform/:id" element = {<BookingFormInfo/>} />
+                            <Route path="bookingform/:id" element = {<BookingFormInfo handleLogin = {handleLogin} handleLogout={handleLogout}/>} />
                             <Route path="editbookingform/:id" element = {<p>edit booking form</p>} />
                         </Routes>
                     </div>

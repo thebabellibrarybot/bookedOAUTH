@@ -1,14 +1,23 @@
 import { Calendar, ImageGrid } from 'components/forms'
-import { RadioButtons } from 'components/buttons'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
 import { MdLocationPin } from "react-icons/md"
-import { BasicButton } from 'components/buttons'
+import { BasicButton, GoogleOAuth2Button, LogoutButton, RadioButtons } from 'components/buttons'
+import { authController, serviceController } from 'services/http'
+import { useNavigate } from 'react-router-dom'
+import { CONST } from '../config'
 
-const BookingFormInfo = () => {
+const BookingFormInfo = (props) => {
 
+    console.log(props, "handleLogout")
+    const handleLogin = props.handleLogin
+    const handleLogout = props.handleLogout
+    const [loggedIn, setLoggedIn] = useState(false)
     const { id } = useParams('prac')
+    let navigate = useNavigate()
+    const [isGoogleAvailable, setIsGoogleAvailable] = useState(false)
+    const [messageError, setMessageError] = useState("")
     const [bookingFormInfo, setBookingFormInfo] = useState(null)
     const [userEntry, setUserEntry] = useState({
         name: '',
@@ -39,6 +48,27 @@ const BookingFormInfo = () => {
         fetchData()
     }, [id, setBookingFormInfo])
 
+    // effect that handles the auth for the form
+    useEffect(() => {
+        let isUserAuthenticated = localStorage.getItem("sid")
+        if (isUserAuthenticated) {
+            handleLogin()
+            setLoggedIn(true)
+            return navigate(`/bookingform/${id}`)
+        } else {
+            handleLogout()
+            setLoggedIn(false)
+        }
+        
+        serviceController.isOAuth2GoogleAvailable()
+            .then(response => {
+                let { serviceName, isActive }= response.data
+                console.log(`${serviceName} status: ${isActive ? "Available" : "Not available"}`)
+                setIsGoogleAvailable(isActive)
+            })
+
+    }, [])
+
     // Function to handle changes in the input fields
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -60,10 +90,69 @@ const BookingFormInfo = () => {
     }
 
     // prac function to handle submission of the form
-    const fire = () => {
+    const fire = async () => {
 
-        openController.sendBookingEmail("schedule")
+        const entryObject = {
+            userEntry: userEntry,
+            bookingFormInfo: bookingFormInfo
+        }
 
+        const res = await openController.postSchedule(entryObject)
+        if (res) {
+            console.log(res, 'res from fire')
+        }
+    }
+
+    const logout = () => {
+        handleLogout()
+        console.log("logout")
+        setLoggedIn(false)
+        localStorage.removeItem("sid")
+        navigate(`/bookingform/${id}`)
+    }
+
+    const startWithGoogle = function (e) {
+        e.preventDefault()
+        console.log("startWithGoogle")
+        authController.startWithOAuth2(CONST.uri.auth.GOOGLE_LOGIN)
+            .then(onSuccessLogin)
+            .catch(onFailLogin)
+    }
+
+    const onSuccessLogin = function ({data}) {
+        let { sid } = data
+        console.log("onSuccessLogin", data, sid)
+
+        if (!sid) {
+            let error = "An error occurred during the login process"
+            console.log(error)
+            setMessageError(error)
+            return
+        }
+        if (userEntry.email !== sid.email) {
+            console.log("userEntry.email", sid.email)
+            setUserEntry({
+                ...userEntry,
+                email: sid.email
+            })
+        }
+        setLoggedIn(true)
+        console.log("sid", sid, data, "onSuccessLogin")
+        localStorage.setItem("sid", JSON.stringify(sid))
+        console.log("Login successful, adding sid and navigating to home")
+        handleLogin()
+        console.log("handleLogin from bookingForm")
+        navigate(`/bookingform/${id}`)
+    }
+
+    const onFailLogin = function (error) {
+        if (typeof error !== "object" && !error.response?.data) {
+            return
+        }
+        error = error.response.data.error
+        console.log(error, 'onFailLogin')
+        setLoggedIn(false)
+        setMessageError(error)
     }
 
     if (bookingFormInfo === null) {
@@ -167,8 +256,12 @@ const BookingFormInfo = () => {
                 </div>
 
                 <div className='form-body'>
+
+                    {loggedIn ? <h2 className='mb-3'>Logout</h2> : <h2 className='mb-3'>Log in</h2>}
+
+                    {loggedIn ? <LogoutButton textContent={"Logout"} onClick={logout}/> : <GoogleOAuth2Button onClick={startWithGoogle} />}
                     
-                    <BasicButton text = {"fire postBooking"} onClick={fire}/>
+                    <BasicButton text = {"Submit button"} onClick={fire} className={loggedIn ? 'active-button' : 'inactive-button'}/>
 
                 </div>
             </div>

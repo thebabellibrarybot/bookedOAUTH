@@ -1,22 +1,18 @@
-const { Schema, model, ObjectId } = require("mongoose")
-const logger = require("../services/log")
-const bcrypt = require("bcrypt")
+const { Schema, model } = require("mongoose")
 
 const ScheduleSchema = new Schema({
-    adminId: { type: String, required: true, unique: true },
-    tattooInfo: { type: Object, required: true },
-    adminInfo: { type: Object, required: true },
-    themesInfo: { type: Object, required: true },
-    calendarInfo: { type: Object, required: true },
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    phone: {type: String, required: true },
-    date: { type: String, required: true },
-    time: { type: String, required: true },
-    message: { type: String, required: true },
-    image: { type: Array, required: true },
-    size: { type: String, required: true },
-    waiver: { type: Boolean, required: true },
+    userOrgin: { type: Object, required: false },
+    name: { type: String, required: false },
+    email: { type: String, required: false },
+    phone: {type: String, required: false },
+    date: { type: String, required: false },
+    time: { type: String, required: false },
+    message: { type: String, required: false },
+    image: { type: Array, required: false },
+    size: { type: String, required: false },
+    waiver: { type: Boolean, required: false },
+    eventLink: { type: String, required: false },
+    sentGmailResUrl: { type: String, required: false },
     updated: {
         type: Date,
         default: Date.now 
@@ -27,34 +23,6 @@ const ScheduleSchema = new Schema({
     }
 })
 
-ScheduleSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id
-        delete returnedObject._id
-        delete returnedObject.__v
-    }
-})
-
-
-ScheduleSchema.pre("save", async function(next) {
-    if (this.password) {
-        const salt = await bcrypt.genSalt()
-        this.password = await bcrypt.hash(this.password, salt)
-    }
-    next()
-})
-
-ScheduleSchema.post("save", function(doc, next) {
-    let savedUser = doc
-    logger.info(`User with email [${savedUser.email}] succesfully created`)
-    next()
-})
-
-ScheduleSchema.pre("findOneAndUpdate", function(next) {
-    this.options.runValidators = true
-    next()
-})
-
-const ScheduleModel = model("scheduleinfo", ScheduleSchema)
+const ScheduleModel = model("bookeddatesinfo", ScheduleSchema)
 
 module.exports = ScheduleModel

@@ -3,7 +3,7 @@ const logger = require("../services/log")
 const bcrypt = require("bcrypt")
 
 const BookingFormInfoSchema = new Schema({
-    adminId: { type: String, required: true, unique: true },
+    adminId: { type: String, required: true },
     tattooInfo: { type: Object, required: true },
     adminInfo: { type: Object, required: true },
     themesInfo: { type: Object, required: true },

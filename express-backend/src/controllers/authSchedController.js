@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { google } = require('googleapis');
+const { getOAuth2Client, createCalendarEvent, sendEmail } = require('../services/auth/googleAPI');
 
 function AuthController(database, logger) {
 
@@ -7,19 +8,16 @@ function AuthController(database, logger) {
     this.logger = logger
 
     const CONST = require("../utils/constants")
-    const bcrypt = require("bcrypt")
-    const DuplicatedEmailError = require("../utils/customErrors")
-    const jwtUtil = require("../utils/jwt")
 
     const event = {
         'summary': 'Meeting with Clients',
         'description': 'Discussing project updates',
         'start': {
-          'dateTime': '2023-11-06T09:00:00-07:00',
+          'dateTime': '2023-12-10T09:00:00-07:00',
           'timeZone': 'America/Los_Angeles',
         },
         'end': {
-          'dateTime': '2023-11-06T10:00:00-08:00',
+          'dateTime': '2023-12-10T10:00:00-08:00',
           'timeZone': 'America/Los_Angeles',
         },
         'attendees': [
@@ -51,133 +49,53 @@ function AuthController(database, logger) {
     const emailContent = `To: ${toEmail}\r\nSubject: ${emailSubject}\r\n\r\n${emailBody}`;
     const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
 
-
-            
-
-    // this will create a calendarevent and then also send an email to accept or decline the calendar event
-    this.postBookingByUserID = async(request, response) => { 
-
-        try {
-
-            const oauth2Client = new google.auth.OAuth2(
-                `${process.env.GOOGLE_AUTH_CLIENT_ID}`,
-                `${process.env.GOOGLE_AUTH_CLIENT_SECRET}`
-              );
-            oauth2Client.setCredentials({
-                access_token: request.session.passport.user.accessToken,
-                refresh_token: request.session.passport.user.refreshToken
-            })
-
-
-            if (request.session.passport.user.accessToken) {
-
-                const calendar = google.calendar(
-                    { 
-                        version: 'v3',
-                        auth: oauth2Client 
-                    }
-                )
-                const gmail = google.gmail({
-                    version: 'v1',
-                    auth: oauth2Client,
-                  }
-                )
-            
-                calendar.events.insert({
-                    calendarId: 'primary',
-                    resource: event
-                }, (err, res) => {
-                    if (err) return console.log('The API returned an error: ' + err)
-
-                    console.log('Event created: %s', res.data.htmlLink)
-                    console.log('sending follow up email')
-
-                    gmail.users.messages.send({
-                        userId: 'me',
-                        resource: {
-                          raw: base64EncodedEmail,
-                        },
-                      })
-                    
-                })
-                console.log('sent email succ')
-
-            } else {
-                response.status(401).json({ error: 'Unauthorized no access token' })
-            }
-        }
-        catch(error) {
-            const message = `Imposible to login user for sched: ${error}`
-            this.logger.error(message)
-            response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
-        }
-    }
-
-    this.sendBookingEmail = async(request, response) => {
-
-        const adminSched = jwtUtil.decodeJWT(request.cookies.adminSched)
-        const refreshToken = jwtUtil.decodeJWT(request.cookies.adminSched).id.providers[0].refreshToken
-
-        console.log(adminSched, 'adminSched from sendBookingEmail', refreshToken, 'refreshToken from sendBookingEmail')
-
-        try {
-
-          const oauth2Client = new google.auth.OAuth2(
-              `${process.env.GOOGLE_AUTH_CLIENT_ID}`,
-              `${process.env.GOOGLE_AUTH_CLIENT_SECRET}`
-            );
-          oauth2Client.setCredentials({
-              refresh_token: refreshToken
-          })
-
-
-          if (refreshToken) {
-
-              const calendar = google.calendar(
-                  { 
-                      version: 'v3',
-                      auth: oauth2Client 
-                  }
-              )
-              const gmail = google.gmail({
-                  version: 'v1',
-                  auth: oauth2Client,
-                }
-              )
-          
-              calendar.events.insert({
-                  calendarId: 'primary',
-                  resource: event
-              }, (err, res) => {
-                  if (err) return console.log('The API returned an error: ' + err)
-
-                  console.log('Event created: %s', res.data.htmlLink)
-                  console.log('sending follow up email')
-
-                  gmail.users.messages.send({
-                      userId: 'me',
-                      resource: {
-                        raw: base64EncodedEmail,
-                      },
-                    })
-                  
-              })
-              console.log('sent email succ')
-
-          } else {
-              response.status(401).json({ error: 'Unauthorized no access token' })
-          }
-      }
-      catch(error) {
-          const message = `Imposible to login user for sched: ${error}`
-          this.logger.error(message)
-          response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
-      }
-
-      response.status(200).json({ message: 'email sent' })
+    this.postBookingByUserID = async (request, response) => {
+      try {
+        const oauth2Client = getOAuth2Client(request);
+        const bookingFormInfo = request.body.bookingFormInfo;
+        const userEntry = request.body.userEntry;
     
-    }
+        const calendarEventLink = await createCalendarEvent(oauth2Client, event);
+        const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
+        const sentGmailAuth = sentGmail.headers.Authorization;
+        const sentGmailResUrl = sentGmail.request.reqponseURL;
+    
+        if (calendarEventLink && sentGmail) {
 
+          this.logger.info(`Event created: %s ${calendarEventLink}`);
+          this.logger.info(`Email sent: %s ${sentGmail}`);
+
+          const booking = {
+            userOrgin: bookingFormInfo.adminId,
+            name: userEntry.name,
+            email: userEntry.email,
+            phone: userEntry.phone,
+            date: userEntry.date,
+            time: userEntry.time,
+            message: userEntry.message,
+            image: userEntry.image,
+            size: userEntry.size,
+            waiver: userEntry.waiver,
+            eventLink: calendarEventLink,
+            sentGmailResUrl: sentGmailResUrl,
+          }
+          const newScheduleObject = await this.database.addBookingSchedById(booking);
+
+          response.status(200).json({
+            message: 'successfully added new schedule entry',
+            newScheduleObject,
+            eventLink: calendarEventLink,
+          });
+        } else {
+          this.logger.error('Failed to create event or send email');
+          response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
+        }
+      } catch (error) {
+        this.logger.error(`Error during postBookingByUserID: ${error}`);
+        response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
+      }
+    };
+    
 }
 
 const logger = require("../services/log")

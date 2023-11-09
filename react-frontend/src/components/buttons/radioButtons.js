@@ -9,6 +9,8 @@ const RadioButtons = (props) => {
         setSelected(e)
     }
 
+    console.log(props.booked, 'props.booked from RadioButtons')
+
     return (
         <div className='radio-selector'>
             <h3>{props.header}</h3>
