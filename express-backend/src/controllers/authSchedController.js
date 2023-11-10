@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { google } = require('googleapis');
-const { getOAuth2Client, createCalendarEvent, sendEmail } = require('../services/auth/googleAPI');
+const { getOAuth2Client, createCalendarEvent, sendEmail, composeEvent, composeGmail } = require('../services/auth/googleAPI');
 
 function AuthController(database, logger) {
 
@@ -54,6 +54,8 @@ function AuthController(database, logger) {
         const oauth2Client = getOAuth2Client(request);
         const bookingFormInfo = request.body.bookingFormInfo;
         const userEntry = request.body.userEntry;
+        const event = composeEvent(userEntry, bookingFormInfo);
+        const base64EncodedEmail = composeGmail(userEntry, bookingFormInfo);
     
         const calendarEventLink = await createCalendarEvent(oauth2Client, event);
         const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
@@ -78,6 +80,7 @@ function AuthController(database, logger) {
             waiver: userEntry.waiver,
             eventLink: calendarEventLink,
             sentGmailResUrl: sentGmailResUrl,
+            timeZone: userEntry.timeZone,
           }
           const newScheduleObject = await this.database.addBookingSchedById(booking);
 

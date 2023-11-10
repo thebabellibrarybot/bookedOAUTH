@@ -10,7 +10,6 @@ import { CONST } from '../config'
 
 const BookingFormInfo = (props) => {
 
-    console.log(props, "handleLogout")
     const handleLogin = props.handleLogin
     const handleLogout = props.handleLogout
     const [loggedIn, setLoggedIn] = useState(false)
@@ -29,6 +28,7 @@ const BookingFormInfo = (props) => {
         image: [],
         size: '',
         waiver: false,
+        timeZone: '',
     })
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [activeAvailableTimes, setActiveAvailableTimes] = useState(null)
@@ -105,7 +105,6 @@ const BookingFormInfo = (props) => {
 
     const logout = () => {
         handleLogout()
-        console.log("logout")
         setLoggedIn(false)
         localStorage.removeItem("sid")
         navigate(`/bookingform/${id}`)
@@ -113,7 +112,6 @@ const BookingFormInfo = (props) => {
 
     const startWithGoogle = function (e) {
         e.preventDefault()
-        console.log("startWithGoogle")
         authController.startWithOAuth2(CONST.uri.auth.GOOGLE_LOGIN)
             .then(onSuccessLogin)
             .catch(onFailLogin)
@@ -121,7 +119,6 @@ const BookingFormInfo = (props) => {
 
     const onSuccessLogin = function ({data}) {
         let { sid } = data
-        console.log("onSuccessLogin", data, sid)
 
         if (!sid) {
             let error = "An error occurred during the login process"
@@ -130,27 +127,22 @@ const BookingFormInfo = (props) => {
             return
         }
         if (userEntry.email !== sid.email) {
-            console.log("userEntry.email", sid.email)
             setUserEntry({
                 ...userEntry,
                 email: sid.email
             })
         }
         setLoggedIn(true)
-        console.log("sid", sid, data, "onSuccessLogin")
         localStorage.setItem("sid", JSON.stringify(sid))
-        console.log("Login successful, adding sid and navigating to home")
         handleLogin()
-        console.log("handleLogin from bookingForm")
         navigate(`/bookingform/${id}`)
     }
 
     const onFailLogin = function (error) {
         if (typeof error !== "object" && !error.response?.data) {
-            return
+            return console.log(error)
         }
         error = error.response.data.error
-        console.log(error, 'onFailLogin')
         setLoggedIn(false)
         setMessageError(error)
     }

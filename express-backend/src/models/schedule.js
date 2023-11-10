@@ -13,6 +13,7 @@ const ScheduleSchema = new Schema({
     waiver: { type: Boolean, required: false },
     eventLink: { type: String, required: false },
     sentGmailResUrl: { type: String, required: false },
+    timeZone: { type: String, required: false },
     updated: {
         type: Date,
         default: Date.now 
