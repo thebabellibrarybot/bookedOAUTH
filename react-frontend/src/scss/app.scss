@@ -5,8 +5,13 @@
 }
 
 .app {
-  min-width: 100vw;
-  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: scroll;
 }
 
 p, h1 {
@@ -30,7 +35,7 @@ p, h1 {
 .wild-background {
   background: linear-gradient(135deg, #00B4DB, #7800b0, #00B4DB, #5f13c9);
   background-size: 400% 400%; // Control the size of the gradient effect
-  animation: gradientAnimation 100s linear infinite; // Create an animation
+  animation: gradientAnimation 60s linear infinite; // Create an animation
 
   @keyframes gradientAnimation {
     0% {
@@ -45,3 +50,8 @@ p, h1 {
   }
 }
 
+input {
+  background-color: rgba(255, 255, 255, 0.166);
+  border-radius: 10px;
+  border: none;
+}

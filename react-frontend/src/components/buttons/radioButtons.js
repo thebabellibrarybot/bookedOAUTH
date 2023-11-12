@@ -7,6 +7,7 @@ const RadioButtons = (props) => {
     const handleChange = (e) => {
         console.log(e)
         setSelected(e)
+        props.callBack(e)
     }
 
     console.log(props, 'props.booked from RadioButtons')

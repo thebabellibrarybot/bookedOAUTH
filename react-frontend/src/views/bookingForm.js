@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
 import { MdLocationPin } from "react-icons/md"
-import { BasicButton, GoogleOAuth2Button, LogoutButton, RadioButtons } from 'components/buttons'
+import { BasicButton, GoogleOAuth2Button, LogoutButton, RadioButtons, SizeTextBox } from 'components/buttons'
 import { authController, serviceController } from 'services/http'
 import { useNavigate } from 'react-router-dom'
 import { CONST } from '../config'
@@ -29,9 +29,9 @@ const BookingFormInfo = (props) => {
         size: '',
         waiver: false,
         timeZone: '',
+        bookedString: '',
     })
     const [isSubmitted, setIsSubmitted] = useState(false)
-    const [activeAvailableTimes, setActiveAvailableTimes] = useState(null)
 
     // effect that loads the booking form info from the database
     useEffect(() => {
@@ -96,11 +96,11 @@ const BookingFormInfo = (props) => {
             userEntry: userEntry,
             bookingFormInfo: bookingFormInfo
         }
-
-        const res = await openController.postSchedule(entryObject)
+        console.log('fired entryObject', entryObject)
+        /*const res = await openController.postSchedule(entryObject)
         if (res) {
             console.log(res, 'res from fire')
-        }
+        }*/
     }
 
     const logout = () => {
@@ -145,6 +145,38 @@ const BookingFormInfo = (props) => {
         error = error.response.data.error
         setLoggedIn(false)
         setMessageError(error)
+    }
+
+    const callBackTrigger = (e) => {
+
+        setUserEntry((prevUserEntry) => ({
+            ...prevUserEntry,
+            date: e.date,
+            time: e.time,
+            timeZone: e.timeZone,
+            bookedString: String(e.date).split('-')[0] + `-${e.time} (${e.timeZone})`
+        }))
+    }
+
+    const handleSizeCallBack = (e) => {
+        setUserEntry((prevUserEntry) => ({
+            ...prevUserEntry,
+            size: e
+        }))
+    }
+
+    const handleImageCallBack = (e) => {
+        setUserEntry((prevUserEntry) => ({
+            ...prevUserEntry,
+            image: e
+        }))
+    }
+
+    const handleMessage = (newText) => {
+        setUserEntry({
+            ...userEntry,
+            message: newText
+        })
     }
 
     if (bookingFormInfo === null) {
@@ -216,24 +248,25 @@ const BookingFormInfo = (props) => {
 
                 <div className="form-line">
 
-                    <ImageGrid customOptions = {bookingFormInfo.tattooInfo.customOptions} flashImages = {bookingFormInfo.tattooInfo.flashImages}/>
-
-                    <RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'flash'/>
-
-                    <br></br>
-
-                    <h3>{"Any details you'd like to add?"}</h3>
-                    <input></input>
+                    <h3 style = {{textAlign: "left"}}>{"What would you like to get tattooed?"}</h3>
+                    <ImageGrid customOptions = {bookingFormInfo.tattooInfo.customOptions} flashImages = {bookingFormInfo.tattooInfo.flashImages} callBack = {handleImageCallBack}/>
 
                     <br></br>
 
-                    <h3>Reserve a time</h3>
-                    <Calendar bookingFormInfo={bookingFormInfo}/>
+                    <RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>
 
+                    <br></br>
+                    <h3 style = {{textAlign: "left"}}>{"Any additional details?"}</h3>
+                    <SizeTextBox value = {userEntry.message} callbackFunction = {handleMessage}/>
 
                 </div>
 
-                <div className='waiver'>
+                <div className='form-line'>
+                    <Calendar bookingFormInfo={bookingFormInfo} callBackTrigger={callBackTrigger}/>
+                </div>    
+                
+
+                {/*<div className='waiver'>
                     <p>{"click to say you've read and sign"}</p>
                     <p>onclick datetime stamp</p>
                 </div>
@@ -245,9 +278,9 @@ const BookingFormInfo = (props) => {
 
                 <div className='deposits'>
                     <p>deposit amount and venmo link with svg</p>
-                </div>
+        </div>*/}
 
-                <div className='form-body'>
+                <div className='form-body form-line'>
 
                     {loggedIn ? <h2 className='mb-3'>Logout</h2> : <h2 className='mb-3'>Log in</h2>}
 

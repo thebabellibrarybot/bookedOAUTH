@@ -3,11 +3,8 @@ import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo } 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { BookingFormInfoProvider } from "provider/bookingFormInfo"
 import './scss/_main.scss'
-import logoSVG from './assets/logo.svg'
 
 function Footer() {
-
-    // get color for svg file
 
     return (
         <footer className="footer">
@@ -50,7 +47,9 @@ function App() {
                     </div>
                 </BookingFormInfoProvider>
             </BrowserRouter>
+            <br></br>
             <Footer />
+            <br></br>
         </div>
     )
 }

@@ -6,6 +6,8 @@ import {
 } from './loginButtons'
 import RadioButtons from './radioButtons'
 import BasicButton from './common'
+import SetTimeButton from './setTime'
+import SizeTextBox from './sizeTextBox'
 
 export { 
     LoginButton, 
@@ -13,5 +15,7 @@ export {
     LogoutButton,
     LinkButton,
     RadioButtons,
-    BasicButton
+    BasicButton,
+    SetTimeButton,
+    SizeTextBox
 }

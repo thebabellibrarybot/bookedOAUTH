@@ -8,7 +8,7 @@ function ImageGrid(props) {
     // State to track the currently displayed images and the selected image
     const [currentImages, setCurrentImages] = useState(flashImages.slice(0, 8))
     const [currentPage, setCurrentPage] = useState(1)
-    const [selected, setSelected] = useState(null)
+    const [selected, setSelected] = useState([])
 
     useEffect(() => {
 
@@ -35,6 +35,17 @@ function ImageGrid(props) {
             }
         }
     }
+    
+    const handleSelected = (imageObject) => {
+        // add the selected image to the selected array
+        if (selected.includes(imageObject)) {
+            setSelected(selected.filter(item => item !== imageObject))
+        } else {
+            setSelected([...selected, imageObject])
+        }
+        // Pass the selected image to the parent component
+        props.callBack(selected)
+    }
 
     return (
         <>
@@ -45,8 +56,8 @@ function ImageGrid(props) {
                 {currentImages.map((imageObject, index) => (
                     <div
                         key={index}
-                        className={index === selected ? "image-grid-item-selected" : "image-grid-item"}
-                        onClick={() => setSelected(index)} // Pass a function to setSelected
+                        className={selected.includes(imageObject) ? "image-grid-item-selected" : "image-grid-item"}
+                        onClick={() => handleSelected(imageObject)} // Pass a function to setSelected
                     > 
                         <img src={imageObject.ImageURL} alt={imageObject} />
                         <p>{imageObject.imageName ? imageObject.imageName : null}</p>

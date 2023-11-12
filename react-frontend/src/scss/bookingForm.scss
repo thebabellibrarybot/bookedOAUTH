@@ -5,7 +5,9 @@
     width: 80%;
     height: 15vh;
     z-index: 1;
-    margin-top: 2.5%;
+    margin-top: 3%;
+    border-radius: 10px;
+    overflow: hidden;
     img {
         position: relative;
         max-height: 30%;
@@ -16,13 +18,14 @@
 .form-header {
 
     display: flex;
+    padding: 10px;
     width: 80%;
     align-items: center;
-    justify-content: space-between;
-    border: 1px solid black;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 2.5%;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.166);
+    border-radius: 10px;
+    
+    margin-top: 3%;
     text-align: left;
     max-height: 20%;
 
@@ -41,12 +44,12 @@
         flex-direction: column;
         overflow-y: scroll;
         padding: 10px;
-        border: 1px solid red;
         text-align: left;
     }
 }
 
 .form-grid {
+    padding: 10px;
     display: grid;
     grid-template-columns: 1fr 1fr; 
     grid-gap: 10px;
@@ -55,17 +58,24 @@
     }
 }
 .form-line {
+    padding: 10px;
     display: flex;
     flex-direction: column;
     width: 80%;
     align-items: start;
-    justify-content: flex-start;
-    border: 1px solid black;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 2.5%;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.166);
+    border-radius: 10px;
+    margin-top: 3%;
     input {
         width: 98%;
         min-height: 5vh;
     }
+}
+
+
+.cal-form-line {
+    margin-top: 3%;
+    text-align: left;
+    width: 100%;
 }
