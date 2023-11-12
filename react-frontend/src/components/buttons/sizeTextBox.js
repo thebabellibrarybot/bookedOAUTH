@@ -5,16 +5,6 @@ const SizeTextBox = ({ value, placeholder, callbackFunction }) => {
     const maxCharacters = 500 // Set the maximum character limit
     const [text, setText] = useState(value || '') // Initialize with the provided value or an empty string
 
-    useEffect(() => {
-        // Trim the text if it exceeds the character limit
-        if (text.length > maxCharacters) {
-            setText(text.slice(0, maxCharacters))
-        }
-
-        // Invoke the callback function with the current text whenever it changes
-        callbackFunction(text)
-    }, [text, callbackFunction, maxCharacters])
-
     const handleTextChange = (event) => {
         const newText = event.target.value
 
@@ -22,6 +12,7 @@ const SizeTextBox = ({ value, placeholder, callbackFunction }) => {
         if (newText.length <= maxCharacters) {
             setText(newText)
         }
+        callbackFunction(newText)
     }
 
     const calculateRows = () => {

@@ -1,7 +1,18 @@
 .radio-selector {
-    border: 1px solid red;
+    h3 {
+        width: 100%;
+    }
     width: 100%;
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .radio-button {
+        width: 80%;
+        margin: 5px;
+        padding: 3px;
+    }
 }
 
 /* SizeTextBox.css */

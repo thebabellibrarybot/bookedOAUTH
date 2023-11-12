@@ -32,7 +32,7 @@ function LogoutButton ({onClick, textContent}) {
             text={textContent}
             className={"btn-light"}
             onClick={onClick}
-            style={{backgroundColor:"#0d6efd", color: "white"}}
+            style={{backgroundColor:"rgba(255, 255, 255, 0.166)", color: "white"}}
         />
     )
 }

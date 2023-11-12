@@ -126,12 +126,10 @@ const BookingFormInfo = (props) => {
             setMessageError(error)
             return
         }
-        if (userEntry.email !== sid.email) {
-            setUserEntry({
-                ...userEntry,
-                email: sid.email
-            })
-        }
+        setUserEntry({
+            ...userEntry,
+            email: sid.email
+        })
         setLoggedIn(true)
         localStorage.setItem("sid", JSON.stringify(sid))
         handleLogin()
@@ -178,6 +176,8 @@ const BookingFormInfo = (props) => {
             message: newText
         })
     }
+
+    console.log(userEntry, 'userEntry from bookingFormInfo')
 
     if (bookingFormInfo === null) {
         return (
@@ -286,7 +286,7 @@ const BookingFormInfo = (props) => {
 
                     {loggedIn ? <LogoutButton textContent={"Logout"} onClick={logout}/> : <GoogleOAuth2Button onClick={startWithGoogle} />}
                     
-                    <BasicButton text = {"Submit button"} onClick={fire} className={loggedIn ? 'active-button' : 'inactive-button'}/>
+                    <BasicButton text = {"Submit button"} onClick={fire} className={loggedIn ? 'active-button' : 'inactive-button'} style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}}/>
 
                 </div>
             </div>

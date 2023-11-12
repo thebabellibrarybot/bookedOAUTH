@@ -1,8 +1,10 @@
 .selected {
-    background-color: red;
-    color: white;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.332);
+    border: 3px solid rgba(255, 255, 255, 0.166);
+    padding: 3px;
 }
 .unselected {
-    background-color: white;
-    color: black;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.166);
 }

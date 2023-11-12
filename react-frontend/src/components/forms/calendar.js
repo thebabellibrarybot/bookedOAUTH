@@ -1,8 +1,8 @@
 import Calendar from "react-calendar"
 import "react-calendar/dist/Calendar.css"
-import SetTimeButton from "../buttons/setTime"
 import { useState, useEffect } from "react"
 import { calculateAvailableTimeSlots, filterArrayByWeekday, filterCurretnlyBookedByDate } from "../../services/time"
+import { RotaryList } from "../forms"
 
 const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
 
@@ -19,7 +19,6 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
         timeRules.availableTimes.split('-')[1].trim(' '), 
         timeRules.blockTime
     )
-    const currentlyBooked = (filterCurretnlyBookedByDate(bookingFormInfo.calendarInfo.currentlyBooked, date, bookingFormInfo.calendarInfo.bookedMin, timeRules.blockTime)).flat()
 
     useEffect(() => {
         const getTimeZone = () => {
@@ -45,7 +44,7 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
 
     return (
         <div className="cal-form-line">
-            <h2>set time from calendar</h2>
+            <h3 style = {{textAlign: 'left'}}>Schedule your booking</h3>
             <p>date: {date ? `${date}` : 'no date set yet'}</p>
             <p>timeZone: {userTimeZone ? `${userTimeZone}` : 'no time zone set yet'}</p>
             <Calendar
@@ -56,8 +55,7 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
 
             <br></br>
 
-            {viewTimes ? <SetTimeButton availableTimes = {availableTimes} currentBookings = {currentlyBooked} header = 'Select a time:' callBackFunction={callBackFunction}/> : 'hidden times' }
-
+            {viewTimes ? <RotaryList options={availableTimes} callbackFunction={callBackFunction}/> : 'hidden times' }
         </div>
     )
 }
