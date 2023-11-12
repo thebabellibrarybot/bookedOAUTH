@@ -1,5 +1,4 @@
 import Calendar from "react-calendar"
-import "react-calendar/dist/Calendar.css"
 import { useState, useEffect } from "react"
 import { calculateAvailableTimeSlots, filterArrayByWeekday, filterCurretnlyBookedByDate } from "../../services/time"
 import { RotaryList } from "../forms"
@@ -45,8 +44,6 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
     return (
         <div className="cal-form-line">
             <h3 style = {{textAlign: 'left'}}>Schedule your booking</h3>
-            <p>date: {date ? `${date}` : 'no date set yet'}</p>
-            <p>timeZone: {userTimeZone ? `${userTimeZone}` : 'no time zone set yet'}</p>
             <Calendar
                 onChange={handleDateChange}
                 value={date}
@@ -55,7 +52,12 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
 
             <br></br>
 
-            {viewTimes ? <RotaryList options={availableTimes} callbackFunction={callBackFunction}/> : 'hidden times' }
+            {viewTimes ? 
+                <>
+                    <h3 style = {{textAlign: 'left'}}>Available times</h3>
+                    <RotaryList options={availableTimes} callbackFunction={callBackFunction}/>     
+                </>
+                : 'hidden times' }
         </div>
     )
 }

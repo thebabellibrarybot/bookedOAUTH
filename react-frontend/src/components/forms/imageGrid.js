@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import {FaArrowLeft, FaArrowRight} from 'react-icons/fa'
 
 function ImageGrid(props) {
 
@@ -67,11 +68,11 @@ function ImageGrid(props) {
             </div>
 
             <div className="gridpage">
-                <p onClick={handlePreviousPage}>Previous Page</p>
-                <p onClick={handleNextPage}>Next Page</p>
+                <div onClick={handlePreviousPage} className='p'><FaArrowLeft/><p>Previous Page</p></div>
+                <div onClick={handleNextPage} className='p'><p>Next Page</p><FaArrowRight/></div>
             </div>
         </>
     )
 }
 
-export default ImageGrid
+export default ImageGrid 
