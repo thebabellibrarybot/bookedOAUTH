@@ -10,8 +10,6 @@ const RadioButtons = (props) => {
         props.callBack(e)
     }
 
-    console.log(props, 'props.booked from RadioButtons')
-
     return (
         <div className='radio-selector'>
             <h3>{props.header}</h3>

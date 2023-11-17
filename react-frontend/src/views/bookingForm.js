@@ -7,6 +7,7 @@ import { BasicButton, GoogleOAuth2Button, LogoutButton, RadioButtons, SizeTextBo
 import { authController, serviceController } from 'services/http'
 import { useNavigate } from 'react-router-dom'
 import { CONST } from '../config'
+import { getEndTime, convertTo24Hour, formatTime } from '../services/time'
 
 const BookingFormInfo = (props) => {
 
@@ -23,6 +24,8 @@ const BookingFormInfo = (props) => {
         email: '',
         phone: '',
         date: '',
+        startTime: '',
+        endTime: '',
         time: '',
         message: '',
         image: [],
@@ -30,8 +33,8 @@ const BookingFormInfo = (props) => {
         waiver: false,
         timeZone: '',
         bookedString: '',
+        linkBase: useParams()
     })
-    const [isSubmitted, setIsSubmitted] = useState(false)
 
     // effect that loads the booking form info from the database
     useEffect(() => {
@@ -78,17 +81,6 @@ const BookingFormInfo = (props) => {
         })
     }
 
-    // function to handle selection of a date and filter for available times (google API req)
-    const handleAvailableTimes = (e) => {
-        const {name, value} = e
-    }
-
-    // function to handle submission of the form
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        setIsSubmitted(true)
-    }
-
     // prac function to handle submission of the form
     const fire = async () => {
 
@@ -97,10 +89,11 @@ const BookingFormInfo = (props) => {
             bookingFormInfo: bookingFormInfo
         }
         console.log('fired entryObject', entryObject)
-        /*const res = await openController.postSchedule(entryObject)
+        const res = await openController.postSchedule(entryObject)
         if (res) {
             console.log(res, 'res from fire')
-        }*/
+            // navigate(`/bookingform/${id}/success`, {state: res.data})
+        }
     }
 
     const logout = () => {
@@ -109,7 +102,7 @@ const BookingFormInfo = (props) => {
         localStorage.removeItem("sid")
         navigate(`/bookingform/${id}`)
     }
-
+    // i can probably outsource these three functions since they are reused in several places...
     const startWithGoogle = function (e) {
         e.preventDefault()
         authController.startWithOAuth2(CONST.uri.auth.GOOGLE_LOGIN)
@@ -147,15 +140,20 @@ const BookingFormInfo = (props) => {
 
     const callBackTrigger = (e) => {
 
+        const startTime = convertTo24Hour(e.time)
+        const endTime = (getEndTime(bookingFormInfo.calendarInfo.bookedMin, e.time))
+
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
             date: e.date,
             time: e.time,
             timeZone: e.timeZone,
+            startTime: formatTime(startTime, e.date),
+            endTime: formatTime(endTime, e.date),
             bookedString: String(e.date).split('-')[0] + `-${e.time} (${e.timeZone})`
         }))
     }
-
+    // i can probably normalize and these into one function 
     const handleSizeCallBack = (e) => {
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
@@ -176,8 +174,6 @@ const BookingFormInfo = (props) => {
             message: newText
         })
     }
-
-    console.log(userEntry, 'userEntry from bookingFormInfo')
 
     if (bookingFormInfo === null) {
         return (
@@ -295,9 +291,3 @@ const BookingFormInfo = (props) => {
 }
 
 export default BookingFormInfo
-
-
-/*
-submit will send an email to the user with their request, the reciept, a link to the calendar appointment, and a link to the venmo deposit
-submit will also send an email to the admin with the user request, the reciept, a link to the calendar appointment and a approve or deny button and the users instagram acct and phone number
-*/

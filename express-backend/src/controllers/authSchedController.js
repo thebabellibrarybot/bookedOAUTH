@@ -9,7 +9,7 @@ function AuthController(database, logger) {
 
     const CONST = require("../utils/constants")
 
-    const event = {
+    /*const event = {
         'summary': 'Meeting with Clients',
         'description': 'Discussing project updates',
         'start': {
@@ -48,47 +48,64 @@ function AuthController(database, logger) {
     const emailBody = 'This is a test email sent from my chatbot!';
     const emailContent = `To: ${toEmail}\r\nSubject: ${emailSubject}\r\n\r\n${emailBody}`;
     const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
-
+      */
+    
     this.postBookingByUserID = async (request, response) => {
       try {
         const oauth2Client = getOAuth2Client(request);
         const bookingFormInfo = request.body.bookingFormInfo;
         const userEntry = request.body.userEntry;
-        const event = composeEvent(userEntry, bookingFormInfo);
-        const base64EncodedEmail = composeGmail(userEntry, bookingFormInfo);
-    
-        const calendarEventLink = await createCalendarEvent(oauth2Client, event);
-        const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
-        const sentGmailAuth = sentGmail.headers.Authorization;
-        const sentGmailResUrl = sentGmail.request.reqponseURL;
-    
-        if (calendarEventLink && sentGmail) {
 
-          this.logger.info(`Event created: %s ${calendarEventLink}`);
-          this.logger.info(`Email sent: %s ${sentGmail}`);
+        const booking = {
+          userOrgin: bookingFormInfo.adminId,
+          name: userEntry.name,
+          email: userEntry.email,
+          phone: userEntry.phone,
+          date: userEntry.date,
+          time: userEntry.time,
+          message: userEntry.message,
+          image: userEntry.image,
+          size: userEntry.size,
+          waiver: userEntry.waiver,
+          timeZone: userEntry.timeZone,
+        }
+        const newScheduleObject = await this.database.addBookingSchedById(booking);
+        const eventId = newScheduleObject._id;
 
-          const booking = {
-            userOrgin: bookingFormInfo.adminId,
-            name: userEntry.name,
-            email: userEntry.email,
-            phone: userEntry.phone,
-            date: userEntry.date,
-            time: userEntry.time,
-            message: userEntry.message,
-            image: userEntry.image,
-            size: userEntry.size,
-            waiver: userEntry.waiver,
-            eventLink: calendarEventLink,
-            sentGmailResUrl: sentGmailResUrl,
-            timeZone: userEntry.timeZone,
+        if (newScheduleObject) {
+        
+          const event = composeEvent(userEntry, bookingFormInfo);
+          const base64EncodedEmail = composeGmail(userEntry, bookingFormInfo, eventId);
+      
+          const calendarEventLink = await createCalendarEvent(oauth2Client, event);
+          const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
+
+          const sentGmailAuth = sentGmail.headers.Authorization;
+          const sentGmailResUrl = sentGmail.request.reqponseURL;
+
+          if (calendarEventLink && sentGmail) {
+
+            this.logger.info(`Event created: %s ${calendarEventLink}`);
+            this.logger.info(`Email sent: %s ${sentGmail}`);
+  
+            const addToBookingSchedule = {
+              eventLink: calendarEventLink,
+              sentGmailResUrl: sentGmailResUrl,
+            }
+            const updatedBookingSchedule = await this.database.updatedBookingSchedule(eventId, addToBookingSchedule);
+            this.logger.info(`updatedBookingSchedule added to db: ${updatedBookingSchedule}`);
+  
+            response.status(200).json({
+              message: 'successfully added new schedule entry',
+              updatedBookingSchedule,
+              eventLink: calendarEventLink,
+            });
+
+          } else {
+            this.logger.error('Failed to create event or send email');
+            response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
           }
-          const newScheduleObject = await this.database.addBookingSchedById(booking);
 
-          response.status(200).json({
-            message: 'successfully added new schedule entry',
-            newScheduleObject,
-            eventLink: calendarEventLink,
-          });
         } else {
           this.logger.error('Failed to create event or send email');
           response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
@@ -98,8 +115,33 @@ function AuthController(database, logger) {
         response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
       }
     };
+
+    this.putBookingByUserId = async (request, response) => {
+
+      // get userEntry from db
+      // get bookingFormInfo from db
+      console.log('putBookingByUserId');
+      const { userEntry, bookingFormInfo } = req.params;
+      const link = request.body.link;
+
+      this.logger.info(`userEntry: ${userEntry}, bookingFormInfo: ${bookingFormInfo}`);
+      this.logger.info(`link: ${link}`);
+
+      // if link includes accept: send confirmation email, accept calendar event, update db
+      // if link includes decline: send alt time email, decline calendar event, update db
+      // if link includes cancel: send confirmation email, cancel calendar event, update db
+
+      try {
+        return request.status(200).json({message: 'success'});
+      } catch (error) {
+        this.logger.error(`Error during putBookingByUserId: ${error}`);
+        response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
+      }
+    }
     
 }
+
+
 
 const logger = require("../services/log")
 const database = require("../services/database")

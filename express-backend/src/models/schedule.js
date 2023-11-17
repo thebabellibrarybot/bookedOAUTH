@@ -14,6 +14,9 @@ const ScheduleSchema = new Schema({
     eventLink: { type: String, required: false },
     sentGmailResUrl: { type: String, required: false },
     timeZone: { type: String, required: false },
+    startTime: { type: String, required: false },
+    endTime: { type: String, required: false },
+    bookedString: { type: String, required: false },
     updated: {
         type: Date,
         default: Date.now 

@@ -195,6 +195,18 @@ function UserDatabaseMongoDB(dbConnectionString) {
             return savedSchedule?.toJSON()
         })
     }
+    this.updateBookingSchedById = (id, booking) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        if (!booking) {
+            throw "booking cannot be null or undefined"
+        }
+        return Schedule.findByIdAndUpdate(id, booking, { new: true })
+            .then((updatedBooking) => {
+                return updatedBooking?.toJSON()
+            })
+    }
 }
 
 module.exports = UserDatabaseMongoDB

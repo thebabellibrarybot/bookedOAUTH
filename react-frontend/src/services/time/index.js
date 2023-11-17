@@ -123,10 +123,49 @@ function filterCurretnlyBookedByDate(currentlyBooked, date, bookedMin, interval)
     return currentlyBooked
 }
 
+function formatDateToYYYYMMDD(date) {
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0') // Month is 0-indexed
+    const day = date.getDate().toString().padStart(2, '0')
+  
+    return `${year}-${month}-${day}`
+}
+
+function formatTimeZoneOffset(offsetInMinutes) {
+    const sign = offsetInMinutes < 0 ? '-' : '+'
+    const hours = Math.floor(Math.abs(offsetInMinutes) / 60)
+    const minutes = Math.abs(offsetInMinutes) % 60
+  
+    return `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+}
+
+function convertToISO8601(date, time) {
+
+    const dateTimeString = `${formatDateToYYYYMMDD(date)}T${time}`
+    const dateTime = new Date(dateTimeString)
+    const timeZoneOffset = formatTimeZoneOffset(-dateTime.getTimezoneOffset())
+
+    return `${dateTimeString}:00.000${timeZoneOffset}`
+}
+
+// formats time in ISO format with a timezone offset
+function formatTime(time, date, timeZone) {
+    const [hours, minutes] = time.split(':')
+
+    const formattedHours = hours.length === 1 ? `0${hours}` : hours
+    const formattedMinutes = minutes.length === 1 ? `0${minutes}` : minutes
+    const formattedTime = `${formattedHours}:${formattedMinutes}`
+    const formattedIsoTime = convertToISO8601(date, formattedTime, timeZone)
+
+    return formattedIsoTime
+}
+
 export {
     calculateAvailableTimeSlots,
     filterArrayByWeekday,
     convertTo12Hour,
     convertTo24Hour,
-    filterCurretnlyBookedByDate
+    filterCurretnlyBookedByDate,
+    getEndTime,
+    formatTime
 }
