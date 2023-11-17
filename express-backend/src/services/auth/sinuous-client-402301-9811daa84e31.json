@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "sinuous-client-402301",
+  "private_key_id": "9811daa84e3144f68411d4075d996bb896b26611",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCYZCMrTmxyYAHw\ncs2QWGIjtWvkqTcuiYcPepjJ6oLyXgNlDuCseYY2uLP3ElZ8om2oeyIeD38dV4EG\n0PT0JtPcCfPC5j692OfXCQuh1cpvKiEuqgVGHvVFIrbl9b3aR13CuVNSbGSjBHln\n83eE0xV9yuurCpC+5IMrueu9Gpx/KzFzua97UenmOtC39eocvaxGU3jJ6TD9IGi7\nMpzDNYx58i+CreHKx59+QKDc0Vd4Qd2RnlCgCbsuiSKbS8eJRiPMbU2IOP9mnmzk\njlPFWfvwFtA5T3XdafRiqSkqb2RLgERrzwe4Lx3bLbFoR1VLuB0mdIEFzUsNRv41\n233Sp6Q1AgMBAAECggEAIcN0AFUSlX+8hkHlViEi807vnfy432x0mmMbBYeaJila\nvrH+aPBO4oJnSytKsrgJLD5F15uu2fkoevJih1Kv921UDv9U8NqlOUFFjMBxptIS\ngoSEgR38USpJFCevffR4a1uEwLsHzA+Cd5vbg/gBp7qFHwMLAWRfRJmfh6kk+c6o\nOXZeVwktARntOot+UUxA9QGXh9RV+lR4UN0xMd86jeZRF7dUazIaHbaBaIgrNOZ8\nhBCpxmim6BzPJojyY28JtK+fk4zawnjwNLs/D91s2unpQuSJc+Dlp6F0gXbdFP86\nMmcjcsUJjBp3al0O1nWCREJu1PiYqhBUpq+93lEEOQKBgQDPLR8j+L0MWM+Bzezb\nSm+ZK1u0fIRnGT6HFgIFVMXpICrzKgHkyR/eZe9j+zLzdl8S4xnxmrj4n8/TZ9j5\n0RS6i1tZAtZ5Jug0x2yx0oCcNI+iTVzdEy8tmOMFVZe1JyhncefTZoVmKhKLZHnc\nNxOI10h1ILGTlQNWNm2rHofLrQKBgQC8TdkkLLmQDo4r19dVVqyEWcD3S7C3zp7u\nZkVIyykxLoqnI3ExRHLBeRAWHZDNVwHYUotNhEq/L3dzQhkEV09eDgmAR54Q7e7z\nf0JrlleDIzRHBtDVKJCDZ1qZmtuh8GuSGxLSEMhkvfQ98CdinnfPtw+bVZsNCo7q\n0lhcfoDLqQKBgEMK/wDNBaBxPPVshjGQrPyMI2kMwmv6p1lfrde7zy/Z0QxPk71N\nuJpnskhQifRvYeTiyQp+X01VqhNnj7eICYU0g6MSYAVkqdAqmOoSjLv/5ltHXb3M\n73958j1PrYBZ46FWIwcuLg0ZoFardSPmTtQBltkQc2am2iWUB3lQr/EhAoGAXq9e\ncnwyyqcnAhDEbFrq4JopF7Btqd8xt3qheBsAGYTnn2eI8VcTxQlU92nid/46JUZM\nWawd0cjSbZhc7/vfItI4INLiPm0F7FafVW4BjyVSkixxMd313L1Jp1dg/SrhTFRk\nwFBEE7QYblSl2UcJw96u8FK5ZnNareUbHVdW+BECgYBqvAR3koeeARwXTYeI7XMs\n+GKeUgnhFOUkyWtSfPyyi+rLHyg74Ek7kZ0t07zsqPHdvY+tm5O03PoxhSiiFqPE\nPIdrXle89DtmI2Zz4wye2q2Sqb/cbJEu/cgU0/wanOGzkMSLHPwNw+KTWL+411QT\nPVE/9Oy06R8T0Y1/OYNKpA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "booked-app@sinuous-client-402301.iam.gserviceaccount.com",
+  "client_id": "110311179724561089232",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/booked-app%40sinuous-client-402301.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

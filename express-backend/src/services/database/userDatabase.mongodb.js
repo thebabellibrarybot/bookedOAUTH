@@ -6,6 +6,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
     const User = require("../../models/user")
     const BookingFormInfo = require("../../models/bookingFormInfo")
     const Schedule = require("../../models/schedule")
+    const GuestKey = require("../../models/guestKey")
 
     this.connect = () => {
 
@@ -205,6 +206,59 @@ function UserDatabaseMongoDB(dbConnectionString) {
         return Schedule.findByIdAndUpdate(id, booking, { new: true })
             .then((updatedBooking) => {
                 return updatedBooking?.toJSON()
+            })
+    }
+    // add keys by id
+    this.addKeysById = (id, keys) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        if (!keys) {
+            throw "keys cannot be null or undefined"
+        }
+        return GuestKey.findByIdAndUpdate(id, {
+            $push: {
+                keys: {
+                    keys
+                }
+            }}, {
+            new: true
+        }
+        ).then((savedKeys) => {
+            return savedKeys?.toJSON()
+        })
+    }
+    this.getKeysById = (id) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        return GuestKey.findById(id)
+            .then((keys) => {
+                return keys?.toJSON()
+            })
+    }
+    this.updateKeysById = (id, keys) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        if (!keys) {
+            throw "keys cannot be null or undefined"
+        }
+        return GuestKey.findByIdAndUpdate(id, keys, { new: true })
+            .then((updatedKeys) => {
+                return updatedKeys?.toJSON()
+            })
+    }
+    this.createKeysById = (id, keys) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        if (!keys) {
+            throw "keys cannot be null or undefined"
+        }
+        return GuestKey.create(keys)
+            .then((keys) => {
+                return keys?.toJSON()
             })
     }
 }

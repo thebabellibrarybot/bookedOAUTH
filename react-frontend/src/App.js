@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo } from 'views'
+import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo, AcceptEvent } from 'views'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { BookingFormInfoProvider } from "provider/bookingFormInfo"
 import './scss/_main.scss'
@@ -43,6 +43,7 @@ function App() {
                             <Route path="*" element={<h1>404 Not found</h1>} />
                             <Route path="bookingform/:id" element = {<BookingFormInfo handleLogin = {handleLogin} handleLogout={handleLogout}/>} />
                             <Route path="editbookingform/:id" element = {<p>edit booking form</p>} />
+                            <Route path="bookedevent/accept/:bookinginfoformid/:userenteryid" element = {<AcceptEvent/>}/>
                         </Routes>
                     </div>
                 </BookingFormInfoProvider>
