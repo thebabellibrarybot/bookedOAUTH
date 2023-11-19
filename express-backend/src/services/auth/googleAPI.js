@@ -1,5 +1,3 @@
-// calendarFunctions.js
-
 const { google } = require('googleapis');
 require('dotenv').config();
 
@@ -31,8 +29,6 @@ async function createCalendarEvent(oauth2Client, event) {
       },
       (err, res) => {
         if (err) {
-          console.log(err, 'err from createCalendarEvent')
-          console.log(data.error, 'data.errors from createCalendarEvent')
           reject(`The calendar API returned an error: ${err}`);
         } else {
           resolve(res.data.htmlLink);
@@ -48,6 +44,8 @@ async function sendEmail(oauth2Client, base64EncodedEmail) {
         version: 'v1',
         auth: oauth2Client,
       });
+
+      console.log(gmail)
   
       gmail.users.messages.send(
         {
@@ -58,14 +56,14 @@ async function sendEmail(oauth2Client, base64EncodedEmail) {
         },
         (err, res) => {
           if (err) {
-            reject(`Failed to send email: ${err}`);
+            reject(`Failed to send email in googleAPI: ${err}`);
           } else {
             resolve(res);
           }
         }
       );
     });
-  }
+}
 
 function composeEvent(userEntry, bookingFormInfo) {
 
@@ -88,6 +86,12 @@ function composeEvent(userEntry, bookingFormInfo) {
             'responseStatus': 'needsAction',
             'displayName': `${bookingFormInfo.adminInfo.displayName}`,
             'organizer': true,  // Set to true for the event organizer
+          },
+          {
+            'email': `${userEntry.email}`,
+            'responseStatus': 'needsAction',
+            'displayName': `${userEntry.name}`,
+            'organizer': false,  // Set to true for the event organizer
           }
         ],
         'guestsCanModify': true,  // Guests can modify the event
@@ -105,6 +109,7 @@ function composeEvent(userEntry, bookingFormInfo) {
 
 function composeGmail(userEntry, bookingFormInfo, eventId) {
 
+    const senderEmail = "info@bokted.com";
     const toEmail = bookingFormInfo.adminInfo.contact.email;
     const emailSubject = `New Booking Request from ${userEntry.name}`;
     // const styles = bookingFormInfo.themesInfo.styles;
@@ -169,12 +174,62 @@ function composeGmail(userEntry, bookingFormInfo, eventId) {
     `;
   
     // Convert to base64-encoded email content
-    const emailContent = `To: ${toEmail}\r\nSubject: ${emailSubject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${emailBody}`;
+    const emailContent = `From: ${senderEmail}\r\nTo: ${toEmail}\r\nSubject: ${emailSubject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${emailBody}`;
     const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
   
     return base64EncodedEmail;
-  }
+}
   
+function composeConfirmationEmail(userEntry, bookingFormInfo, eventId) {
+
+  const senderEmail = "info@bokted.com";
+  const toEmail = userEntry.email;
+  const emailSubject = `Booking Request Confirmation from ${bookingFormInfo.adminInfo.displayName}`;
+
+  const emailBody = `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+          }
+          p {
+            margin: 10px 0;
+          }
+          ul {
+            list-style-type: none;
+            padding: 0;
+          }
+          li {
+            margin-bottom: 5px;
+          }
+          a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+      <body>
+        <p>Hello ${userEntry.name},</p>
+        <p>Thank you for your booking request with ${bookingFormInfo.adminInfo.displayName}. We will review your request and get back to you shortly.</p>
+        <p>Booking Details: ${userEntry.message}</p>
+        <p>Booking Requested for: ${userEntry.date} at ${userEntry.time}</p>
+        <p>Booking Date: ${userEntry.date}</p>
+        <p>Booking Time: ${userEntry.time}</p>
+        <p>Booking Time Zone: ${userEntry.timeZone}</p>
+        <p>Booking Image: ${userEntry.image}</p>
+        <p>Booking Size: ${userEntry.size}</p>
+        <p>Booking Waiver: ${userEntry.waiver}</p>
+        <p>Best regards,</p>
+        <p>Please make sure to pay your deposit valued at: $100 at the following venmo link to secure your booking</p>
+        <p>Your Booking System</p>
+      </body>
+    </html>
+  `;
+}
 
 
 module.exports = {
@@ -183,79 +238,5 @@ module.exports = {
     sendEmail,
     composeEvent,
     composeGmail,
+    composeConfirmationEmail
 };
-
-
-
-/*const calendarEventLink = await calendar.events.insert({
-                calendarId: 'primary',
-                resource: event
-            }, (err, res) => {
-                if (err) return this.logger.error('The calendar API returned an error: ' + err)
-                else {
-                  this.logger.info('Event created: %s', res.data.htmlLink)
-                  return res.data.htmlLink
-                }
-            })
-
-            const sentGmail = await gmail.users.messages.send({
-                userId: 'me',
-                resource: {
-                  raw: base64EncodedEmail,
-                },
-              })
-            */
-
-
-
-              /* i was getting 
-
-
-              body: 
-              '{"summary":
-              "New Booking Request from jack",
-              "description":"Tattoo of  on med size in inches by jack",
-              "start":{"dateTime":"2023-11-16T05:00:00.000ZT9:0:00-undefined}",
-              "timeZone":"America/New_York"},
-              "end":{"dateTime":"2023-12-10T10:00:00-08:00",
-              "timeZone":"America/Los_Angeles"},
-              "attendees":[{"email":"jtucker0110@gmail.com",
-              "responseStatus":"needsAction","displayName":"name","organizer":true}],
-              "guestsCanModify":true,
-              "reminders":{"useDefault":false,"overrides":[{"method":"email","minutes":30},{"method":"popup","minutes":10}]}}
-
-
-               const event = {
-        'summary': 'Meeting with Clients',
-        'description': 'Discussing project updates',
-        'start': {
-          'dateTime': '2023-11-04T09:00:00-07:00',
-          'timeZone': 'America/Los_Angeles',
-        },
-        'end': {
-          'dateTime': '2023-11-04T10:00:00-08:00',
-          'timeZone': 'America/Los_Angeles',
-        },
-        'attendees': [
-          {
-            'email': 'client1@example.com',
-            'responseStatus': 'needsAction',
-            'displayName': 'Client 1',
-            'organizer': true,  // Set to true for the event organizer
-          },
-          {
-            'email': 'client2@example.com',
-            'responseStatus': 'needsAction',
-            'displayName': 'Client 2',
-          },
-        ],
-        'guestsCanModify': true,  // Guests can modify the event
-        'reminders': {
-          'useDefault': false,
-          'overrides': [
-            { 'method': 'email', 'minutes': 30 },
-            { 'method': 'popup', 'minutes': 10 },
-          ],
-        },
-      };
-              */

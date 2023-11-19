@@ -6,7 +6,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
     const User = require("../../models/user")
     const BookingFormInfo = require("../../models/bookingFormInfo")
     const Schedule = require("../../models/schedule")
-    const GuestKey = require("../../models/guestKey")
+    const GuestKey = require("../../models/guest")
 
     this.connect = () => {
 

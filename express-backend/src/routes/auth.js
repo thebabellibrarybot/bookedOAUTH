@@ -58,7 +58,7 @@ if (isGoogleCondigured) {
 
     router.get("/oauth/user", middlewares.isUserAuthenticated, authController.getUserSession)
 
-    router.post("/schedule/:id", middlewares.isUserAuthenticated, authSchedController.postBookingByUserID)
+    router.post("/old-schedule/:id", middlewares.isUserAuthenticated, authSchedController.postBookingByUserID)
 
     router.put("/bookedevent/accept/:userentry/:bookingforminfo", middlewares.isUserAuthenticated, authSchedController.putBookingByUserId)
     

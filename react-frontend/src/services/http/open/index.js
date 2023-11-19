@@ -20,7 +20,6 @@ const postSchedule = (schedule) => {
     }
 
     let uri = CONST.uri.resources.SCHEDULE
-
     return axios.post(uri, schedule, { withCredentials: true })
 }
 

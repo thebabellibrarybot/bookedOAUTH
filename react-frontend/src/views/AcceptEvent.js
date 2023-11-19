@@ -6,3 +6,4 @@ const AcceptEvent = () => {
         </div>
     )
 }
+export default AcceptEvent

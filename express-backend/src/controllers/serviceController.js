@@ -1,12 +1,13 @@
 require("dotenv").config();
 const { google } = require("googleapis");
-const { createCalendarEvent, sendEmail, composeEvent, composeGmail } = require("../services/auth/googleAPI");
-const { getOAuth2ServiceClient } = require("../services/auth/googleAPI");
+const { createCalendarEvent, sendEmail, composeEvent, composeGmail, composeConfirmationEmail } = require("../services/auth/googleAPI");
+const { getOAuth2ServiceClient } = require("../services/auth/serviceAuth");
 
 
-function ServiceController(database) {
+function ServiceController(database, logger) {
 
     this.database = database
+    this.logger = logger
 
     const CONST = require("../utils/constants")
 
@@ -16,8 +17,9 @@ function ServiceController(database) {
     // update the db with the client's calendar and email object
 
     this.postSchedule = async (request, response) => {
+        this.logger.info(`Received request to postSchedule: ${request.body}`);
         try {
-            const oauth2Client = getOAuth2ServiceClient();
+            const oauth2Client = await getOAuth2ServiceClient();
             const bookingFormInfo = request.body.bookingFormInfo;
             const userEntry = request.body.userEntry;
             const booking = {
@@ -38,14 +40,15 @@ function ServiceController(database) {
             if (newScheduleObject) {
                 const event = composeEvent(userEntry, bookingFormInfo);
                 const base64EncodedEmail = composeGmail(userEntry, bookingFormInfo, eventId);
-            
-                const calendarEventLink = await createCalendarEvent(oauth2Client, event);
+                const base64EncodedConfirmationEmail = composeConfirmationEmail(userEntry, bookingFormInfo, eventId);
                 const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
+                const sentConfirmationEmail = await sendEmail(oauth2Client, base64EncodedConfirmationEmail);
+                const calendarEventLink = await createCalendarEvent(oauth2Client, event);
 
                 const sentGmailAuth = sentGmail.headers.Authorization;
                 const sentGmailResUrl = sentGmail.request.reqponseURL;
 
-                if (calendarEventLink && sentGmail) {
+                if (calendarEventLink && sentGmail && sentConfirmationEmail) {
 
                     this.logger.info(`Event created: %s ${calendarEventLink}`);
                     this.logger.info(`Email sent: %s ${sentGmail}`);
@@ -54,7 +57,7 @@ function ServiceController(database) {
                     eventLink: calendarEventLink,
                     sentGmailResUrl: sentGmailResUrl,
                     }
-                    const updatedBookingSchedule = await this.database.updatedBookingSchedule(eventId, addToBookingSchedule);
+                    const updatedBookingSchedule = await this.database.updateBookingSchedById(eventId, addToBookingSchedule);
                     this.logger.info(`updatedBookingSchedule added to db: ${updatedBookingSchedule}`);
         
                     response.status(200).json({
@@ -79,7 +82,8 @@ function ServiceController(database) {
 
 }
 
+const logger = require("../services/log")
 const database = require("../services/database")
-const serviceController = new ServiceController(database)
+const serviceController = new ServiceController(database, logger)
 
 module.exports = serviceController

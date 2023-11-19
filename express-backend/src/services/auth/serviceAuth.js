@@ -1,50 +1,32 @@
-const { jwtSecret } = require('../../config');
-const jwt = require('jsonwebtoken');
-const uuid = require('uuid/v4');
+const { JWT } = require('google-auth-library');
+const { getSecret } = require('../../utils/secretAWS');
 const { google } = require('googleapis');
 
-// eventually i want to replace this with a sercrets manager function...
-/*
-const AWS = require('aws-sdk');
-const secretsManager = new AWS.SecretsManager();
-
-async function getSecret() {
-  const secretName = 'your-secret-name';
-
+async function getOAuth2ServiceClient() {
   try {
-    const data = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
-    const secret = JSON.parse(data.SecretString);
 
-    // Use the extracted credentials from the secret in your application
-    const clientId = secret.clientId;
-    const clientSecret = secret.clientSecret;
+    const serviceAccountKey = await getSecret('secret-service-json');
 
-    return { clientId, clientSecret };
+    const auth = new JWT({
+      email: serviceAccountKey.client_email,
+      key: serviceAccountKey.private_key,
+      scopes: [
+        "https://www.googleapis.com/auth/calendar",
+        "https://www.googleapis.com/auth/gmail.send",
+      ],
+    });
+
+    auth.subject = "info@bokted.com";
+
+    return auth;
+
   } catch (error) {
-    console.error('Error retrieving secret:', error);
+    console.error('Error getting OAuth2 service client:');
     throw error;
+
   }
-}
-
-// Example usage
-const secretValues = await getSecret();
-console.log(secretValues);
-*/
-
-function getOAuth2ServiceClient() {
-  // Load the credentials from the service account key file
-  const serviceAccountKey = require('/path/to/service-account-key.json');
-
-  // Create a new JWT client using the service account credentials
-  const auth = new JWT({
-    email: serviceAccountKey.client_email,
-    key: serviceAccountKey.private_key,
-    scopes: ['https://www.googleapis.com/auth/calendar'], // Example scope
-  });
-
-  return auth;
 }
 
 module.exports = {
     getOAuth2ServiceClient,
-    };
+    }

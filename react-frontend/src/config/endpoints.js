@@ -12,7 +12,7 @@ export const uri = {
     resources: {
         USERS: env.API_SERVER + "/users/",
         BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo",
-        SCHEDULE: env.API_SERVER + "/schedule/:id",
+        SCHEDULE: env.API_SERVER + "/schedule/:id", 
         SENDBOOKINGEMAIL: env.API_SERVER + "/sendbooking/:id"
     },
     services: {
