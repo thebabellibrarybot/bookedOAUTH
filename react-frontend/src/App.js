@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo, AcceptEvent } from 'views'
+import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo, AcceptEvent, EditBookingForm, EditProfile } from 'views'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { BookingFormInfoProvider } from "provider/bookingFormInfo"
 import './scss/_main.scss'
@@ -36,14 +36,20 @@ function App() {
                     <div className='content'>
                         <Routes>
                             <Route index element={<LoginPage handleLogin={handleLogin}/>} />
+
                             <Route path="login" element={<LoginPage handleLogin={handleLogin}/>} />
                             <Route path="login/success" element={<SuccessLoginPage/>} />
                             <Route path="register" element={<RegisterPage/>} />
-                            <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
                             <Route path="*" element={<h1>404 Not found</h1>} />
+
                             <Route path="bookingform/:id" element = {<BookingFormInfo handleLogin = {handleLogin} handleLogout={handleLogout}/>} />
-                            <Route path="editbookingform/:id" element = {<p>edit booking form</p>} />
                             <Route path="bookedevent/accept/:bookinginfoformid/:userenteryid" element = {<AcceptEvent/>}/>
+
+                            <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
+                            <Route path="editbookingform" element = {<EditBookingForm handleLogout={handleLogout}/>}></Route>
+                            <Route path="mycalendar" element={<p>mycalendar</p>}></Route>
+                            <Route path="editprofile" element={<EditProfile handleLogout = {handleLogout}/>}></Route>
+                            <Route path="mystats" element={<p>mystats</p>}></Route>
                         </Routes>
                     </div>
                 </BookingFormInfoProvider>

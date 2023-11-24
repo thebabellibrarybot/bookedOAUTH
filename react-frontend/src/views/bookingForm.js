@@ -211,6 +211,8 @@ const BookingFormInfo = (props) => {
                     <p>{bookingFormInfo.adminInfo.bio}</p>
                 </div>
 
+                <br></br>
+
                 <div className="form-header form-grid">
                     <p>First Name</p>
                     <input

@@ -13,7 +13,10 @@ export const uri = {
         USERS: env.API_SERVER + "/users/",
         BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo",
         SCHEDULE: env.API_SERVER + "/schedule/:id", 
-        SENDBOOKINGEMAIL: env.API_SERVER + "/sendbooking/:id"
+        SENDBOOKINGEMAIL: env.API_SERVER + "/sendbooking/:id",
+        BOOKINGPROFILE: env.API_SERVER + "/admininfo",
+        BOOKINGPROFILEIMAGES: env.API_SERVER + "/admininfoimages",
+        GETS3IMAGE: env.API_SERVER + "/s3image"
     },
     services: {
         OAUTH2_GOOGLE_STATUS: env.API_SERVER + "/login/google/status",

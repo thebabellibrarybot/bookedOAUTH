@@ -3,6 +3,7 @@ import { LogoutButton, BasicButton } from 'components/buttons'
 import { usersController, openController } from 'services/http'
 import { useNavigate } from 'react-router-dom'
 import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
+import { MdLocationPin } from 'react-icons/md'
 
 function Spinner() {
     return (
@@ -13,19 +14,25 @@ function Spinner() {
     )
 }
 
-function UserInformation ({user}) {
-
-    console.log(user, "user")
-
+function UserInformation ({user, bookingFormInfo}) {
+    
     return (
-        <div className='d-flex align-items-center mb-5'>
-            {
-                user.picture &&
-                <img src={user.picture} className="avatar shadow me-2"/>
-            }
-            <div className='d-flex flex-column'>
-                <strong>{user.fullname || user.login}</strong>
-                <small>{user.email}</small>
+        <div className='content'>
+            <div className="form-header">
+                <img src = {bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.image?bookingFormInfo.adminInfo.image:user.picture:user.picture} alt = 'basic profile image'></img>
+                
+                <div className='form-bio'>
+                    <h3>{user.fullname.length > 1 ? user.fullname : bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
+                </div>
+            </div>
+
+            <div className="form-header">                
+                <div className='form-bio'>
+                    <div style = {{display: 'flex', textAlign: 'left'}}>
+                        <MdLocationPin className='icon-sm'/>
+                        <p>{`Public Link:\n https://localhost:3000/${user.id}`}</p>
+                    </div>
+                </div>
             </div>
         </div>
     )
@@ -34,25 +41,52 @@ function UserInformation ({user}) {
 function HomePage({handleLogout}) {
 
     const [ userInformation, setUserInformation ] = useState(null)
-    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
+    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext(null)
+    const defaultBookingFormInfo = {
+        adminInfo: {
+            displayName: "Default Name",
+            bio: "Default Bio",
+            profileImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+            backgroundImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+            nameImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+            location: "Default Location",
+        },
+        tattooInfo: {
+            customOptions: [],
+            flashImages: [],
+            hourlyPrice: 0,
+            availableColors: [],
+            small: 0,
+            medium: 0,
+            large: 0,
+            availableTimes: [],
+        },
+        themesInfo: {
+            themes: [],
+        },
+        calendarInfo: {
+            blockedWeekDates: [],
+            availableTimes: [],
+            currentlyBooked: [],
+            blockTime: 0,
+            bookedMin: 0,
+        }
+    }
 
     let navigate = useNavigate()
 
     useEffect(() => {
         let sid = localStorage.getItem("sid")
-        console.log(sid, "sid")
         sid = JSON.parse(sid)
         let { id, providerId } = sid
-
-        console.log(id, providerId, "id, providerId")
+        console.log(sid.id, "sid.id from homePage")
 
         usersController.getUserById(id, providerId)
             .then(({data}) => {
-                console.log(data, "data from getUserById")
                 if (!data || data === "") {
                     console.log("No user found", data, "logging out")
+                    logout()
                 }
-                console.log(data)
                 setUserInformation(data)
             })
             .catch(error => {
@@ -62,12 +96,46 @@ function HomePage({handleLogout}) {
 
         openController.getUserBookingInfoByID(id)
             .then(({data}) => {
-                console.log(data, "data from getUserBookingInfoByID")
                 if (!data || data === "") {
-                    console.log("No booking form found", data, "logging out")
+                    console.log("No booking form found", data, "creating default booking form")
+                    const defaultBookingFormInfo = {
+                        adminId: sid.id,
+                        tattooInfo: {
+                            customOptions: [],
+                            flashImages: [],
+                            hourlyPrice: 0,
+                            availableColors: [],
+                            small: 0,
+                            medium: 0,
+                            large: 0,
+                            availableTimes: [],
+                        },
+                        adminInfo: {
+                            displayName: "Default Name",
+                            bio: "Default Bio",
+                            profileImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+                            backgroundImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+                            nameImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
+                            location: "Default Location",
+                        },
+                        themesInfo: {
+                            themes: [],
+                        },
+                        calendarInfo: {
+                            blockedWeekDates: [],
+                            availableTimes: [],
+                            currentlyBooked: [],
+                            blockTime: 0,
+                            bookedMin: 0,
+                        }
+                    }
+                    alert("Hello New User! Please create a booking form")
+                    setBookingFormInfo(defaultBookingFormInfo)
                 }
-                console.log(data)
-                setBookingFormInfo(data)
+                if (data) {
+                    console.log("booking form found", data)
+                    setBookingFormInfo(data)
+                }
             })
             .catch(error => {
                 console.error(error)
@@ -76,35 +144,31 @@ function HomePage({handleLogout}) {
 
     const logout = () => {
         handleLogout()
-        console.log("logout")
         localStorage.removeItem("sid")
         navigate("/")
     }
 
-    const fire = () => {
-
-        openController.postSchedule("schedule")
-
-    }
-
-
-    if (!userInformation) {
+    if (userInformation === null){
         return <Spinner />
     }
-
+    if  (bookingFormInfo === null) {
+        return <Spinner />
+    }
     return (
-        <div className='App-body'>
-            <h1 className='mb-5'>Welcome!</h1>
+        <div className='content'>
 
-            <UserInformation user={userInformation} />
+            {bookingFormInfo ? <UserInformation user={userInformation} bookingFormInfo={bookingFormInfo}/> : <UserInformation user={userInformation} bookingFormInfo={defaultBookingFormInfo}/>}
 
-            <BasicButton text = {"fire postBooking"} onClick={fire}/>
+            <div className='form-line'>
+                <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text = {"Edit Profile"} onClick={() => navigate(`/editprofile`)}/>
 
-            {bookingFormInfo ? <BasicButton text={"Edit a Current Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton text={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
+                {bookingFormInfo ? <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"Edit Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
 
-            <BasicButton text={"View Calendar"} onClick={() => navigate("/mycalendar")}/>
+                <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"View Calendar"} onClick={() => navigate("/mycalendar")}/>
 
-            <LogoutButton textContent={"Logout"} onClick={logout}/>
+                <LogoutButton textContent={"Logout"} onClick={logout}/>
+            </div>
+
         </div>
     )
 } 

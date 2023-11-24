@@ -184,7 +184,22 @@ function UserDatabaseMongoDB(dbConnectionString) {
                 return deletedBooking?.toJSON()
             })
     }
-
+    this.putBookingFormInfoById = (userId, bookingInfo) => {
+        if (!userId) {
+            throw "userId cannot be null or undefined"
+        }
+        if (!bookingInfo) {
+            throw "bookingInfo cannot be null or undefined"
+        }
+        return BookingFormInfo.findOneAndUpdate({ id: userId }, bookingInfo, { new: true })
+            .then((bookingInfo) => {
+                return bookingInfo?.toJSON()
+            })
+            .catch((err) => {
+                console.log(err)
+            }
+        )
+    }
     // schedule database handling functions
     this.addBookingSchedById = (booking) => {
         if (!booking) {

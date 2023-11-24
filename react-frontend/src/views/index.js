@@ -6,6 +6,8 @@ import SuccessLoginPage from './successLoginPage'
 import FailureLoginPage from './failureLoginPage'
 import BookingFormInfo from './bookingForm'
 import AcceptEvent from './AcceptEvent'
+import EditBookingForm from './editBookingForm'
+import EditProfile from './editProfile'
 
 
 export { 
@@ -15,5 +17,7 @@ export {
     SuccessLoginPage, 
     FailureLoginPage,
     BookingFormInfo,
-    AcceptEvent
+    AcceptEvent,
+    EditBookingForm,
+    EditProfile,
 }
