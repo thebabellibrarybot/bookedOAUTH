@@ -56,3 +56,7 @@ input {
   border-radius: 10px;
   border: none;
 }
+
+input::placeholder {
+  color: #3a3a3a; /* Adjust the color as needed */
+}

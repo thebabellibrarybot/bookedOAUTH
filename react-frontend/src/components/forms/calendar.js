@@ -40,6 +40,7 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
         setDate(date)
         setViewTimes(true)
     }
+    // add a handler that will show the number of bookings on each day
 
     return (
         <div className="cal-form-line">
@@ -57,7 +58,7 @@ const MyCalendar = ({bookingFormInfo, callBackTrigger}) => {
                     <h3 style = {{textAlign: 'left'}}>Available times</h3>
                     <RotaryList options={availableTimes} callbackFunction={callBackFunction}/>     
                 </>
-                : 'hidden times' }
+                : null }
         </div>
     )
 }

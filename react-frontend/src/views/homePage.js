@@ -4,6 +4,7 @@ import { usersController, openController } from 'services/http'
 import { useNavigate } from 'react-router-dom'
 import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
 import { MdLocationPin } from 'react-icons/md'
+import { ImageDisplay } from 'components/forms'
 
 function Spinner() {
     return (
@@ -19,10 +20,14 @@ function UserInformation ({user, bookingFormInfo}) {
     return (
         <div className='content'>
             <div className="form-header">
-                <img src = {bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.image?bookingFormInfo.adminInfo.image:user.picture:user.picture} alt = 'basic profile image'></img>
+                <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay>
                 
                 <div className='form-bio'>
                     <h3>{user.fullname.length > 1 ? user.fullname : bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
+                    <div style = {{display: 'flex'}}>
+                        <MdLocationPin className='icon-sm'/>
+                        <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
+                    </div>
                 </div>
             </div>
 
@@ -53,23 +58,26 @@ function HomePage({handleLogout}) {
         },
         tattooInfo: {
             customOptions: [],
+            depositAmout: "0",
             flashImages: [],
-            hourlyPrice: 0,
+            hourlyPrice: "0",
             availableColors: [],
-            small: 0,
-            medium: 0,
-            large: 0,
-            availableTimes: [],
+            small: "0",
+            medium: "0",
+            large: "0",
+            availableTimes: "9:00 AM - 5:00 PM",
+            venmo: "",
+            deposits: "",
         },
         themesInfo: {
-            themes: [],
+            themes: "Default Theme",
         },
         calendarInfo: {
-            blockedWeekDates: [],
-            availableTimes: [],
+            blockedWeekDates: ["Sunday", "Monday"],
+            availableTimes: "9:00 AM - 5:00 PM",
             currentlyBooked: [],
-            blockTime: 0,
-            bookedMin: 0,
+            blockTime: "60 min",
+            bookedMin: "60 min",
         }
     }
 
@@ -103,12 +111,14 @@ function HomePage({handleLogout}) {
                         tattooInfo: {
                             customOptions: [],
                             flashImages: [],
-                            hourlyPrice: 0,
+                            hourlyPrice: "0",
                             availableColors: [],
-                            small: 0,
-                            medium: 0,
-                            large: 0,
-                            availableTimes: [],
+                            small: "5",
+                            medium: "10",
+                            large: "15",
+                            availableTimes: "9:00 AM - 5:00 PM",
+                            venmo: "myurl",
+                            deposits: "please deposit $50 to confirm booking, expect to pay an additional $200 at the end of the session"
                         },
                         adminInfo: {
                             displayName: "Default Name",
@@ -119,14 +129,14 @@ function HomePage({handleLogout}) {
                             location: "Default Location",
                         },
                         themesInfo: {
-                            themes: [],
+                            themes: "Default Theme",
                         },
                         calendarInfo: {
-                            blockedWeekDates: [],
-                            availableTimes: [],
+                            blockedWeekDates: ["Sunday", "Monday"],
+                            availableTimes: "9:00 AM - 5:00 PM",
                             currentlyBooked: [],
-                            blockTime: 0,
-                            bookedMin: 0,
+                            blockTime: "60 min",
+                            bookedMin: "60 min",
                         }
                     }
                     alert("Hello New User! Please create a booking form")
@@ -148,29 +158,49 @@ function HomePage({handleLogout}) {
         navigate("/")
     }
 
+    const style = (test, base) => {
+        if (test === base) {
+            console.log(base, 'needs attention')
+            return {
+                backgroundColor: "red",
+                padding: "0",
+                margin: "0"
+            }
+        }
+        console.log(base, test,'does not need attention')
+        return {
+            backgroundColor: "rgba(255, 255, 255, 0.166)",
+            padding: "0",
+            margin: "0"
+        }
+    }
+
     if (userInformation === null){
         return <Spinner />
     }
     if  (bookingFormInfo === null) {
         return <Spinner />
     }
-    return (
-        <div className='content'>
+    if (bookingFormInfo.adminInfo) {
 
-            {bookingFormInfo ? <UserInformation user={userInformation} bookingFormInfo={bookingFormInfo}/> : <UserInformation user={userInformation} bookingFormInfo={defaultBookingFormInfo}/>}
+        const profileStyle = style(bookingFormInfo.adminInfo.displayName, defaultBookingFormInfo.adminInfo.displayName)
+        const bookingStyle = style(bookingFormInfo.tattooInfo.hourlyPrice, defaultBookingFormInfo.tattooInfo.hourlyPrice)
+       
+        return (
+            <div className='content'>
 
-            <div className='form-line'>
-                <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text = {"Edit Profile"} onClick={() => navigate(`/editprofile`)}/>
+                {bookingFormInfo ? <UserInformation user={userInformation} bookingFormInfo={bookingFormInfo}/> : <UserInformation user={userInformation} bookingFormInfo={defaultBookingFormInfo}/>}
 
-                {bookingFormInfo ? <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"Edit Booking Form"} onClick={() => navigate("/editbookingform")}/> : <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"Create a Booking Form"} onClick={() => navigate("/editbookingform")}/>}
+                <div className='form-line'>
+                    <BasicButton style = {profileStyle} className = "active-button" text = {"Edit Profile"} onClick={()=>navigate("/editprofile")}/>
+                    <BasicButton style = {bookingStyle} className = "active-button" text={"Edit Booking Form"} onClick={() => navigate("/editbookingform")}/>
+                    <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"View Calendar"} onClick={() => navigate("/mycalendar")}/>
+                    <LogoutButton textContent={"Logout"} onClick={logout}/>
+                </div>
 
-                <BasicButton style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}} className = "active-button" text={"View Calendar"} onClick={() => navigate("/mycalendar")}/>
-
-                <LogoutButton textContent={"Logout"} onClick={logout}/>
             </div>
-
-        </div>
-    )
+        )
+    }
 } 
 
 

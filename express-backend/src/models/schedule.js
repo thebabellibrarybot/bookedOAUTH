@@ -17,6 +17,7 @@ const ScheduleSchema = new Schema({
     startTime: { type: String, required: false },
     endTime: { type: String, required: false },
     bookedString: { type: String, required: false },
+    status: { type: String, required: false },
     updated: {
         type: Date,
         default: Date.now 

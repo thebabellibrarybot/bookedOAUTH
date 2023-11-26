@@ -1,12 +1,15 @@
 const convertTo24Hour = (time) => {
-    if (time.includes('am')) {
+    if (time.toLowerCase().includes('am')) {
         const hour = Number(time.split(':')[0].replace(/(am|pm)/i, ''))
         const minute = Number(time.split(':')[1].replace(/(am|pm)/i, ''))
         return `${hour}:${minute}`
-    } else if (time.includes('pm')) {
+    } else if (time.toLowerCase().includes('pm')) {
         const hour = Number(time.split(':')[0].replace(/(am|pm)/i, ''))
         const minute = Number(time.split(':')[1].replace(/(am|pm)/i, ''))
         return `${hour + 12}:${minute}`
+    }
+    else {
+        return time
     }
     // might need to add in the function to make sure that each hour and number have the approptiate number of zero's
 }
@@ -27,9 +30,8 @@ const convertTo12Hour = (time) => {
 function calculateAvailableTimeSlots(startTime, endTime, blockedTime) {
 
     // Convert to 24-hour format
-    const start24Hour = startTime
-    const end24Hour = endTime
-
+    const start24Hour = convertTo24Hour(startTime)
+    const end24Hour = convertTo24Hour(endTime)
     const initialHour = Number(start24Hour.split(':')[0])
     const initialMinute = Number(start24Hour.split(':')[1])
     const finalHour = Number(end24Hour.split(':')[0])
@@ -42,7 +44,6 @@ function calculateAvailableTimeSlots(startTime, endTime, blockedTime) {
     let availableTimes = []
     
     while (currentTime <= endTimeInMinutes) {
-
         let hour = Math.floor(currentTime / 60)
         if (hour >= 12) {
             hour != 12 ? hour -= 12 : hour = 12
@@ -99,7 +100,8 @@ const getEndTime = (bookedMin, startTime) => {
     const startTime24Hour = convertTo24Hour(startTime)
     const hour = Number(startTime24Hour.split(':')[0])
     const minute = Number(startTime24Hour.split(':')[1])
-    const endTime = hour * 60 + minute + Number(bookedMin)
+    const bookedMinNumber = Number(bookedMin.split(' ')[0])
+    const endTime = hour * 60 + minute + Number(bookedMinNumber)
     const endTime12Hour = `${Math.floor(endTime / 60)}:${endTime % 60}`
     return `${endTime12Hour}`
 }
@@ -167,5 +169,5 @@ export {
     convertTo24Hour,
     filterCurretnlyBookedByDate,
     getEndTime,
-    formatTime
+    formatTime,
 }

@@ -36,11 +36,12 @@ function BookingFormInfo(database) {
         }
     }
 
+    // function for a user to create their first public booking form
     this.postBookingByUserID = async(request, response) => {
 
         const id = request.params.id
         const booking = request.body
-
+        console.log(id, "id from postBookingByUserID")
         this.database.getBookingByUserID(id)
             .then(user => {
                 if (!user) {
@@ -61,7 +62,7 @@ function BookingFormInfo(database) {
             }
         )
     }
-
+    // backuphandler for user to create their first public booking form but a form already exsists (this is a measure to handle the default form)
     this.putBookingByUserId = async(request, response) => {
 
         const id = request.params.id
@@ -88,6 +89,7 @@ function BookingFormInfo(database) {
         )
     }
 
+    // functions for user to edit, and upload images to their public booking form
     this.putBookingFormInfoById = async(request, response) => {
         try {
             console.log('starting putBookingFormInfoById')
@@ -112,6 +114,7 @@ function BookingFormInfo(database) {
                         bio: request.body.adminInfo.bio?request.body.adminInfo.bio:oldBookingFormInfo.adminInfo.bio,
                         profileImage: request.body.adminInfo.profileImage?request.body.adminInfo.profileImage:oldBookingFormInfo.adminInfo.profileImage, /// this shoudl just be a url post multermidlleware
                         backgroundImage: request.body.adminInfo.backgroundImage?request.body.adminInfo.backgroundImage:oldBookingFormInfo.adminInfo.backgroundImage,
+                        nameImage: request.body.adminInfo.nameImage?request.body.adminInfo.nameImage:oldBookingFormInfo.adminInfo.nameImage,
                         location: request.body.adminInfo.location?request.body.adminInfo.location:oldBookingFormInfo.adminInfo.location,
                     },
                     themesInfo: {
@@ -193,6 +196,7 @@ function BookingFormInfo(database) {
             response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
         }
     }
+    // public image handler
     this.getS3Image = async(request, response) => {
         console.log('starting getS3Image')
         try {

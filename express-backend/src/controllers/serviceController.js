@@ -1,5 +1,4 @@
 require("dotenv").config();
-const { google } = require("googleapis");
 const { createCalendarEvent, sendEmail, composeEvent, composeGmail, composeConfirmationEmail } = require("../services/auth/googleAPI");
 const { getOAuth2ServiceClient } = require("../services/auth/serviceAuth");
 
@@ -16,6 +15,7 @@ function ServiceController(database, logger) {
     // send the calendar and email object to the client
     // update the db with the client's calendar and email object
 
+    // schedule sender via google provider
     this.postSchedule = async (request, response) => {
         this.logger.info(`Received request to postSchedule: ${request.body}`);
         try {
@@ -34,6 +34,7 @@ function ServiceController(database, logger) {
                 size: userEntry.size,
                 waiver: userEntry.waiver,
                 timeZone: userEntry.timeZone,
+                status: 'pending'
             }
             const newScheduleObject = await this.database.addBookingSchedById(booking);
             const eventId = newScheduleObject._id;
@@ -42,8 +43,9 @@ function ServiceController(database, logger) {
                 const base64EncodedEmail = composeGmail(userEntry, bookingFormInfo, eventId);
                 const base64EncodedConfirmationEmail = composeConfirmationEmail(userEntry, bookingFormInfo, eventId);
                 const sentGmail = await sendEmail(oauth2Client, base64EncodedEmail);
-                const sentConfirmationEmail = await sendEmail(oauth2Client, base64EncodedConfirmationEmail);
                 const calendarEventLink = await createCalendarEvent(oauth2Client, event);
+                const sentConfirmationEmail = await sendEmail(oauth2Client, base64EncodedConfirmationEmail);
+
 
                 const sentGmailAuth = sentGmail.headers.Authorization;
                 const sentGmailResUrl = sentGmail.request.reqponseURL;
@@ -75,7 +77,7 @@ function ServiceController(database, logger) {
                 response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
             }
             } catch (error) {
-                this.logger.error(`Error during postBookingByUserID: ${error}`);
+                this.logger.error(`Error during postSched: ${error}`);
                 response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
             }
         };
@@ -83,7 +85,8 @@ function ServiceController(database, logger) {
 }
 
 const logger = require("../services/log")
-const database = require("../services/database")
+const database = require("../services/database");
+const e = require("express");
 const serviceController = new ServiceController(database, logger)
 
 module.exports = serviceController

@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react'
 const SizeTextBox = ({ value, placeholder, callbackFunction }) => {
     const maxCharacters = 500 // Set the maximum character limit
     const [text, setText] = useState(value || '') // Initialize with the provided value or an empty string
+    const [isValueChanged, setIsValueChanged] = useState(false)
 
     const handleTextChange = (event) => {
         const newText = event.target.value
-
+        setIsValueChanged(true)
         // Check if the new text exceeds the character limit
         if (newText.length <= maxCharacters) {
             setText(newText)
@@ -23,10 +24,10 @@ const SizeTextBox = ({ value, placeholder, callbackFunction }) => {
     return (
         <textarea
             className="size-text-box"
-            value={text}
+            value={isValueChanged?text:''}
             onChange={handleTextChange}
             rows={calculateRows()}
-            placeholder={placeholder}
+            placeholder={text}
         />
     )
 }

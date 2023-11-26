@@ -1,6 +1,7 @@
 const { JWT } = require('google-auth-library');
 const { getSecret } = require('../../utils/secretAWS');
-const { google } = require('googleapis');
+
+
 
 async function getOAuth2ServiceClient() {
   try {
@@ -18,10 +19,21 @@ async function getOAuth2ServiceClient() {
 
     auth.subject = "info@bokted.com";
 
+   /* const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: serviceAccountKey.client_email,
+        privateKey: serviceAccountKey.private_key,
+        accessToken: oAuth2Client.getAccessToken(),
+      },
+    })*/
+
+
     return auth;
 
   } catch (error) {
-    console.error('Error getting OAuth2 service client:');
+      console.error('Error getting OAuth2 service client:');
     throw error;
 
   }

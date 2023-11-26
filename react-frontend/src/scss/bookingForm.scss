@@ -75,6 +75,9 @@
     }
 }
 
+.form-flex {
+    display: flex;
+}
 
 .cal-form-line {
     margin-top: 3%;
@@ -91,4 +94,13 @@
 
 .avatar {
     border-radius: 50px;
+}
+
+.nameImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+        width: 30%;
+    }
 }

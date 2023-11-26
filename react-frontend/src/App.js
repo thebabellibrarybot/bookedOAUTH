@@ -8,7 +8,7 @@ function Footer() {
 
     return (
         <footer className="footer">
-            <small>Powered by Booked</small>
+            <small>Powered by Bokted</small>
             <br></br>
             <br></br>
             <svg width="267" height="243" viewBox="0 0 267 243" fill="white" className = "/* color for svg file */" xmlns="http://www.w3.org/2000/svg">

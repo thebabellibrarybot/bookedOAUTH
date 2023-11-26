@@ -210,6 +210,9 @@ function UserDatabaseMongoDB(dbConnectionString) {
         .then ((savedSchedule) => {
             return savedSchedule?.toJSON()
         })
+        .catch((err) => {
+            console.log(err)
+        })
     }
     this.updateBookingSchedById = (id, booking) => {
         if (!id) {

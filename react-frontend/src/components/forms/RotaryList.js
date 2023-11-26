@@ -5,6 +5,7 @@ const RotaryList = ({ options, callbackFunction }) => {
 
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
     const [selected, setSelected] = useState(null)
+    // add a function to filter currently booked times
 
     const handleScroll = (event) => {
         const delta = Math.sign(event.deltaY)

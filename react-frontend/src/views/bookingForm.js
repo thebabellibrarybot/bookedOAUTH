@@ -1,22 +1,18 @@
-import { Calendar, ImageGrid } from 'components/forms'
+import { Calendar, ImageGrid, ImageDisplay } from 'components/forms'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
 import { MdLocationPin } from "react-icons/md"
-import { BasicButton, GoogleOAuth2Button, LogoutButton, RadioButtons, SizeTextBox } from 'components/buttons'
-import { authController, serviceController } from 'services/http'
+import { BasicButton, RadioButtons, SizeTextBox } from 'components/buttons'
 import { useNavigate } from 'react-router-dom'
-import { CONST } from '../config'
 import { getEndTime, convertTo24Hour, formatTime } from '../services/time'
+import { validateFormFields } from 'services/utils'
 
-const BookingFormInfo = (props) => {
 
-    const handleLogin = props.handleLogin
-    const handleLogout = props.handleLogout
-    const [loggedIn, setLoggedIn] = useState(false)
+const BookingFormInfo = () => {
+
     const { id } = useParams('prac')
     let navigate = useNavigate()
-    const [isGoogleAvailable, setIsGoogleAvailable] = useState(false)
     const [messageError, setMessageError] = useState("")
     const [bookingFormInfo, setBookingFormInfo] = useState(null)
     const [userEntry, setUserEntry] = useState({
@@ -36,6 +32,8 @@ const BookingFormInfo = (props) => {
         linkBase: useParams()
     })
 
+    const [imageSrc, setImageSrc] = useState('')
+
     // effect that loads the booking form info from the database
     useEffect(() => {
         const fetchData = async () => {
@@ -51,26 +49,24 @@ const BookingFormInfo = (props) => {
         fetchData()
     }, [id, setBookingFormInfo])
 
-    // effect that handles the auth for the form
+    // effect that grabs presigned urls
     useEffect(() => {
-        let isUserAuthenticated = localStorage.getItem("sid")
-        if (isUserAuthenticated) {
-            handleLogin()
-            setLoggedIn(true)
-            return navigate(`/bookingform/${id}`)
-        } else {
-            handleLogout()
-            setLoggedIn(false)
+        // Fetch or generate the pre-signed URL here
+        const fetchImageURL = async () => {
+            if (bookingFormInfo) {
+                try {
+                    // Replace 'YOUR_SERVER_ENDPOINT' with the endpoint that generates the pre-signed URL
+                    const response = await openController.getS3Image(bookingFormInfo.adminInfo.backgroundImage)
+                    setImageSrc(response.data)
+                } catch (error) {
+                    console.error('Error fetching image URL:', error)
+                }
+            }
         }
-        
-        serviceController.isOAuth2GoogleAvailable()
-            .then(response => {
-                let { serviceName, isActive }= response.data
-                console.log(`${serviceName} status: ${isActive ? "Available" : "Not available"}`)
-                setIsGoogleAvailable(isActive)
-            })
 
-    }, [])
+        fetchImageURL()
+    }, [bookingFormInfo])
+    
 
     // Function to handle changes in the input fields
     const handleInputChange = (event) => {
@@ -88,54 +84,32 @@ const BookingFormInfo = (props) => {
             userEntry: userEntry,
             bookingFormInfo: bookingFormInfo
         }
-        console.log('fired entryObject', entryObject)
-        const res = await openController.postSchedule(entryObject)
-        if (res) {
-            console.log(res, 'res from fire')
-            // navigate(`/bookingform/${id}/success`, {state: res.data})
+        const reqObjest = {
+            email: userEntry.email,
+            name: userEntry.name,
+            lastName: userEntry.lastName,
+            phone: userEntry.phone,
+            date: userEntry.date,
+            startTime: userEntry.startTime,
+            endTime: userEntry.endTime,
+            timeZone: userEntry.timeZone,
         }
-    }
+        const isValid = validateFormFields(reqObjest)
+        if (!isValid) {
 
-    const logout = () => {
-        handleLogout()
-        setLoggedIn(false)
-        localStorage.removeItem("sid")
-        navigate(`/bookingform/${id}`)
-    }
-    // i can probably outsource these three functions since they are reused in several places...
-    const startWithGoogle = function (e) {
-        e.preventDefault()
-        authController.startWithOAuth2(CONST.uri.auth.GOOGLE_LOGIN)
-            .then(onSuccessLogin)
-            .catch(onFailLogin)
-    }
-
-    const onSuccessLogin = function ({data}) {
-        let { sid } = data
-
-        if (!sid) {
-            let error = "An error occurred during the login process"
-            console.log(error)
-            setMessageError(error)
-            return
+            setMessageError('')
+            const res = await openController.postSchedule(entryObject)
+            if (res) {
+                console.log(res, 'res from fire')
+                navigate(`/bookingform/${id}/success`, {state: res.data})
+            } else (error) => {
+                console.log(error, 'error from fire')
+                setMessageError(error)
+            }
+        } else {
+            setMessageError(isValid)
         }
-        setUserEntry({
-            ...userEntry,
-            email: sid.email
-        })
-        setLoggedIn(true)
-        localStorage.setItem("sid", JSON.stringify(sid))
-        handleLogin()
-        navigate(`/bookingform/${id}`)
-    }
 
-    const onFailLogin = function (error) {
-        if (typeof error !== "object" && !error.response?.data) {
-            return console.log(error)
-        }
-        error = error.response.data.error
-        setLoggedIn(false)
-        setMessageError(error)
     }
 
     const callBackTrigger = (e) => {
@@ -183,21 +157,20 @@ const BookingFormInfo = (props) => {
     
     {
         const headerStyle = {
-            backgroundImage: `url(${bookingFormInfo.adminInfo.backgroundImage})`,
+            backgroundImage: `url(${imageSrc})`,
             backgroundSize: '100% auto',
             backgroundPosition: 'center',
         }
+
         return (
 
             <div className='content'>
 
-                <div className="form-banner" style = {headerStyle}>
-                    {bookingFormInfo.adminInfo.nameImage ? <img src = {bookingFormInfo.adminInfo.nameImage} alt = 'nameImage'></img> : <h1>{bookingFormInfo.adminInfo.displayName}</h1>}
+                <div className="form-banner nameImage" style = {headerStyle}>
+                    {bookingFormInfo.adminInfo.nameImage ? <ImageDisplay s3key = {bookingFormInfo.adminInfo.nameImage}></ImageDisplay> : <h1>cant show image</h1>}
                 </div>
-
                 <div className="form-header">
-                    <img src = {bookingFormInfo.adminInfo.profileImage} alt = 'basic profile image'></img>
-                    
+                    <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay> 
                     <div className='form-bio'>
                         <h3>{bookingFormInfo.adminInfo.displayName}</h3>
                         <div style = {{display: 'flex'}}>
@@ -264,7 +237,8 @@ const BookingFormInfo = (props) => {
                 </div>    
                 
 
-                {/*<div className='waiver'>
+                {
+                /*<div className='waiver'>
                     <p>{"click to say you've read and sign"}</p>
                     <p>onclick datetime stamp</p>
                 </div>
@@ -276,15 +250,12 @@ const BookingFormInfo = (props) => {
 
                 <div className='deposits'>
                     <p>deposit amount and venmo link with svg</p>
-        </div>*/}
+                </div>*/
+                }
 
                 <div className='form-body form-line'>
-
-                    {loggedIn ? <h2 className='mb-3'>Logout</h2> : <h2 className='mb-3'>Log in</h2>}
-
-                    {loggedIn ? <LogoutButton textContent={"Logout"} onClick={logout}/> : <GoogleOAuth2Button onClick={startWithGoogle} />}
-                    
-                    <BasicButton text = {"Submit button"} onClick={fire} className={loggedIn ? 'active-button' : 'inactive-button'} style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}}/>
+                    {messageError ? <p>{messageError}</p> : null}
+                    <BasicButton text = {"Submit button"} onClick={fire} className={'active-button'} style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}}/>
 
                 </div>
             </div>

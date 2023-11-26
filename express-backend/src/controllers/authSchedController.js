@@ -50,11 +50,16 @@ function AuthController(database, logger) {
     const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
       */
     
+    // function for user to submit booking with oauth login
     this.postBookingByUserID = async (request, response) => {
       try {
+        console.log('postBookingByUserID')
+        console.log(request.body, 'request.body from postBookingByUserID')
         const oauth2Client = getOAuth2Client(request);
         const bookingFormInfo = request.body.bookingFormInfo;
         const userEntry = request.body.userEntry;
+
+        console.log(userEntry, 'userEntry from postBookingByUserID')
 
         const booking = {
           userOrgin: bookingFormInfo.adminId,
@@ -111,7 +116,7 @@ function AuthController(database, logger) {
           response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
         }
       } catch (error) {
-        this.logger.error(`Error during postBookingByUserID: ${error}`);
+        this.logger.error(`Error during authSched postBookingByUserID: ${error}`);
         response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
       }
     };

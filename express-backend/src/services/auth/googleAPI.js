@@ -29,6 +29,7 @@ async function createCalendarEvent(oauth2Client, event) {
       },
       (err, res) => {
         if (err) {
+          console.log(err.message);
           reject(`The calendar API returned an error: ${err}`);
         } else {
           resolve(res.data.htmlLink);
@@ -40,12 +41,14 @@ async function createCalendarEvent(oauth2Client, event) {
 
 async function sendEmail(oauth2Client, base64EncodedEmail) {
     return new Promise((resolve, reject) => {
+      if (!oauth2Client || !oauth2Client.credentials) {
+        reject("OAuth2 client not properly authenticated.");
+        return;
+      }
       const gmail = google.gmail({
         version: 'v1',
         auth: oauth2Client,
       });
-
-      console.log(gmail)
   
       gmail.users.messages.send(
         {
@@ -56,7 +59,7 @@ async function sendEmail(oauth2Client, base64EncodedEmail) {
         },
         (err, res) => {
           if (err) {
-            reject(`Failed to send email in googleAPI: ${err}`);
+            reject(`The Gmail API returned an error: ${err}`);
           } else {
             resolve(res);
           }
@@ -67,117 +70,138 @@ async function sendEmail(oauth2Client, base64EncodedEmail) {
 
 function composeEvent(userEntry, bookingFormInfo) {
 
-    const description = `Tattoo appointment req for ${userEntry.name}`
+    try {
+      const description = `Tattoo appointment req for ${userEntry.name}`
    
-    const event = {
-        'summary': `New Booking Request from ${userEntry.name}`,
-        'description': `${description}`,
-        'start': {
-          'dateTime': `${userEntry.startTime}`,
-          'timeZone': `${userEntry.timeZone}`,
-        },
-        'end': {
-          'dateTime': `${userEntry.endTime}`,
-          'timeZone': `${userEntry.timeZone}`,
-        },
-        'attendees': [
-          {
-            'email': `${bookingFormInfo.adminInfo.contact.email}`,
-            'responseStatus': 'needsAction',
-            'displayName': `${bookingFormInfo.adminInfo.displayName}`,
-            'organizer': true,  // Set to true for the event organizer
+      const event = {
+          'summary': `New Booking Request from ${userEntry.name}`,
+          'description': `${description}`,
+          'start': {
+            'dateTime': `${userEntry.startTime}`,
+            'timeZone': `${userEntry.timeZone}`,
           },
-          {
-            'email': `${userEntry.email}`,
-            'responseStatus': 'needsAction',
-            'displayName': `${userEntry.name}`,
-            'organizer': false,  // Set to true for the event organizer
-          }
-        ],
-        'guestsCanModify': true,  // Guests can modify the event
-        'reminders': {
-          'useDefault': false,
-          'overrides': [
-            { 'method': 'email', 'minutes': 30 },
-            { 'method': 'popup', 'minutes': 10 },
+          'end': {
+            'dateTime': `${userEntry.endTime}`,
+            'timeZone': `${userEntry.timeZone}`,
+          },
+          'attendees': [
+            {
+              'email': `${bookingFormInfo.adminInfo.email}`,
+              'responseStatus': 'needsAction',
+              'displayName': `${bookingFormInfo.adminInfo.displayName}`,
+              'organizer': true,  // Set to true for the event organizer
+            },
+            {
+              'email': `${userEntry.email}`,
+              'responseStatus': 'needsAction',
+              'displayName': `${userEntry.name}`,
+              'organizer': false,  // Set to true for the event organizer
+            }
           ],
-        },
-      };
-
-    return event;
+          'guestsCanModify': true,  // Guests can modify the event
+          'reminders': {
+            'useDefault': false,
+            'overrides': [
+              { 'method': 'email', 'minutes': 30 },
+              { 'method': 'popup', 'minutes': 10 },
+            ],
+          },
+        };
+      console.log(event, 'event from composeEvent')
+      return event;
+    } catch (err) {
+      console.log(err.message);
+    }
 }
 
 function composeGmail(userEntry, bookingFormInfo, eventId) {
 
-    const senderEmail = "info@bokted.com";
-    const toEmail = bookingFormInfo.adminInfo.contact.email;
-    const emailSubject = `New Booking Request from ${userEntry.name}`;
-    // const styles = bookingFormInfo.themesInfo.styles;
-  
-    // Construct HTML-formatted email body with styles
-    const emailBody = `
-      <html> 
-        <head>
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              background-color: #f4f4f4;
-              color: #333;
-            }
-            p {
-              margin: 10px 0;
-            }
-            ul {
-              list-style-type: none;
-              padding: 0;
-            }
-            li {
-              margin-bottom: 5px;
-            }
-            a {
-              color: #007BFF;
-              text-decoration: none;
-              font-weight: bold;
-            }
-          </style>
-        </head>
-        <body>
-          <p>Hello ${bookingFormInfo.adminInfo.displayName},</p>
-          <p>You have a new booking request from ${userEntry.name}:</p>
-          
-          <ul>
-            <li><strong>Name:</strong> ${userEntry.name}</li>
-            <li><strong>Email:</strong> ${userEntry.email}</li>
-            <li><strong>Phone:</strong> ${userEntry.phone}</li>
-            <!-- Add more details as needed -->
-            <p>Booking Details: ${userEntry.message}</p>
-            <p>Booking Requested for: ${userEntry.date} at ${userEntry.time}</p>
-            <p>Booking Date: ${userEntry.date}</p>
-            <p>Booking Time: ${userEntry.time}</p>
-            <p>Booking Time Zone: ${userEntry.timeZone}</p>
-            <p>Booking Image: ${userEntry.image}</p>
-            <p>Booking Size: ${userEntry.size}</p>
-            <p>Booking Waiver: ${userEntry.waiver}</p>            
-          </ul>
-          
-          <p>To approve this appointment, please follow the <a href="http://localhost:3000/bookedevent/accept/${eventId}">link here</a>.</p>
-          <p>To decline this appointment, please follow the <a href="http://localhost:3000/bookedevent/decline/${eventId}">link here</a>.</p>
+    try {
+      const senderEmail = "info@bokted.com";
+      const toEmail = bookingFormInfo.adminInfo.email;
+      const emailSubject = `New Booking Request from ${userEntry.name}`;
+      // const styles = bookingFormInfo.themesInfo.styles;
+    
+      // Construct HTML-formatted email body with styles
+      const emailBody = `
+        <html> 
+          <head>
+            <style>
+              body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+                color: #333;
+              }
+              p {
+                margin: 10px 0;
+              }
+              ul {
+                list-style-type: none;
+                padding: 0;
+              }
+              li {
+                margin-bottom: 5px;
+              }
+              a {
+                color: #007BFF;
+                text-decoration: none;
+                font-weight: bold;
+              }
+            </style>
+          </head>
+          <body>
+            <p>Hello ${bookingFormInfo.adminInfo.displayName},</p>
+            <p>You have a new booking request from ${userEntry.name}:</p>
+            
+            <ul>
+              <li><strong>Name:</strong> ${userEntry.name}</li>
+              <li><strong>Email:</strong> ${userEntry.email}</li>
+              <li><strong>Phone:</strong> ${userEntry.phone}</li>
+              <!-- Add more details as needed -->
+              <p>Booking Details: ${userEntry.message}</p>
+              <p>Booking Requested for: ${userEntry.date} at ${userEntry.time}</p>
+              <p>Booking Date: ${userEntry.date}</p>
+              <p>Booking Time: ${userEntry.time}</p>
+              <p>Booking Time Zone: ${userEntry.timeZone}</p>
+              <p>Booking Image: ${userEntry.image}</p>
+              <p>Booking Size: ${userEntry.size}</p>
+              <p>Booking Waiver: ${userEntry.waiver}</p>            
+            </ul>
+            
+            <p>To approve this appointment, please follow the <a href="http://localhost:3000/bookedevent/accept/${eventId}">link here</a>.</p>
+            <p>To decline this appointment, please follow the <a href="http://localhost:3000/bookedevent/decline/${eventId}">link here</a>.</p>
 
-          <p>Alternatively, you can also copy and paste the following link into your browser:</p>
-          <p>link-to-your-booking-page</p>
-          <p>Thank you!</p>
-          
-          <p>Best regards,</p>
-          <p>Your Booking System</p>
-        </body>
-      </html>
-    `;
-  
-    // Convert to base64-encoded email content
-    const emailContent = `From: ${senderEmail}\r\nTo: ${toEmail}\r\nSubject: ${emailSubject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${emailBody}`;
-    const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
-  
-    return base64EncodedEmail;
+            <p>Alternatively, you can also copy and paste the following link into your browser:</p>
+            <p>link-to-your-booking-page</p>
+            <p>Thank you!</p>
+            
+            <p>Best regards,</p>
+            <p>Your Booking System</p>
+          </body>
+        </html>
+      `;
+    
+      // Convert to base64-encoded email content
+      const emailContent = `From: ${senderEmail}\r\nTo: ${toEmail}\r\nSubject: ${emailSubject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${emailBody}`;
+      const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
+      
+      /*
+      const mimeHeaders = [
+        'MIME-Version: 1.0',
+        `From: ${senderEmail}`,
+        `To: ${toEmail}`,
+        `Subject: ${emailSubject}`,
+        'Content-Type: text/html; charset=utf-8',
+        '', // Add an empty line to separate headers from the body
+      ].join('\r\n');
+      const rawEmailContent = `${mimeHeaders}\r\n${emailBody}`;
+      const base64EncodedEmail = Buffer.from(rawEmailContent).toString('base64');
+      */
+
+      return base64EncodedEmail;
+    } catch (err) {
+      throw new Error('Failed to compose email.'); // or customize the error message
+    }
 }
   
 function composeConfirmationEmail(userEntry, bookingFormInfo, eventId) {
@@ -218,17 +242,19 @@ function composeConfirmationEmail(userEntry, bookingFormInfo, eventId) {
         <p>Booking Details: ${userEntry.message}</p>
         <p>Booking Requested for: ${userEntry.date} at ${userEntry.time}</p>
         <p>Booking Date: ${userEntry.date}</p>
-        <p>Booking Time: ${userEntry.time}</p>
-        <p>Booking Time Zone: ${userEntry.timeZone}</p>
-        <p>Booking Image: ${userEntry.image}</p>
-        <p>Booking Size: ${userEntry.size}</p>
-        <p>Booking Waiver: ${userEntry.waiver}</p>
         <p>Best regards,</p>
         <p>Please make sure to pay your deposit valued at: $100 at the following venmo link to secure your booking</p>
         <p>Your Booking System</p>
       </body>
     </html>
   `;
+
+  // Convert to base64-encoded email content
+  const emailContent = `From: ${senderEmail}\r\nTo: ${toEmail}\r\nSubject: ${emailSubject}\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=utf-8\r\n\r\n${emailBody}`;
+  const base64EncodedEmail = Buffer.from(emailContent).toString('base64');
+
+
+  return base64EncodedEmail;
 }
 
 
