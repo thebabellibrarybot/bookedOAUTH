@@ -62,6 +62,7 @@ function AuthController(database, logger) {
         console.log(userEntry, 'userEntry from postBookingByUserID')
 
         const booking = {
+          formId: userEntry.formId,
           userOrgin: bookingFormInfo.adminId,
           name: userEntry.name,
           email: userEntry.email,

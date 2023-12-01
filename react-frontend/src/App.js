@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo, AcceptEvent, EditBookingForm, EditProfile } from 'views'
+import { LoginPage, RegisterPage, HomePage, SuccessLoginPage, BookingFormInfo, AcceptEvent, EditBookingForm, EditProfile, ConfirmedBooking } from 'views'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { BookingFormInfoProvider } from "provider/bookingFormInfo"
 import './scss/_main.scss'
@@ -44,6 +44,7 @@ function App() {
 
                             <Route path="bookingform/:id" element = {<BookingFormInfo handleLogin = {handleLogin} handleLogout={handleLogout}/>} />
                             <Route path="bookedevent/accept/:bookinginfoformid/:userenteryid" element = {<AcceptEvent/>}/>
+                            <Route path="/bookingform/${id}/success" element={<ConfirmedBooking/>}></Route>
 
                             <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
                             <Route path="editbookingform" element = {<EditBookingForm handleLogout={handleLogout}/>}></Route>

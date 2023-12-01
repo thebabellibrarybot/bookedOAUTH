@@ -5,7 +5,6 @@ const RadioButtons = (props) => {
     const [selected, setSelected] = useState(null)
 
     const handleChange = (e) => {
-        console.log(e)
         setSelected(e)
         props.callBack(e)
     }

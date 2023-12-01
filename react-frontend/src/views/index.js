@@ -8,6 +8,7 @@ import BookingFormInfo from './bookingForm'
 import AcceptEvent from './AcceptEvent'
 import EditBookingForm from './editBookingForm'
 import EditProfile from './editProfile'
+import ConfirmedBooking from './ConfirmedBooking'
 
 
 export { 
@@ -20,4 +21,5 @@ export {
     AcceptEvent,
     EditBookingForm,
     EditProfile,
+    ConfirmedBooking,
 }

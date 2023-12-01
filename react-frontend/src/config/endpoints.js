@@ -12,10 +12,11 @@ export const uri = {
     resources: {
         USERS: env.API_SERVER + "/users/",
         BOOKINGFORMINFO: env.API_SERVER + "/bookingforminfo",
+        BOOKINGFORMIMAGES: env.API_SERVER + "/bookingformimages",
         SCHEDULE: env.API_SERVER + "/schedule/:id", 
-        SENDBOOKINGEMAIL: env.API_SERVER + "/sendbooking/:id",
         BOOKINGPROFILE: env.API_SERVER + "/admininfo",
         BOOKINGPROFILEIMAGES: env.API_SERVER + "/admininfoimages",
+        BOOKINGFLASHIMAGES: env.API_SERVER + "/adminflashimages",
         GETS3IMAGE: env.API_SERVER + "/s3image"
     },
     services: {

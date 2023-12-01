@@ -69,7 +69,7 @@ function calculateAvailableTimeSlots(startTime, endTime, blockedTime) {
 }
 
 function filterArrayByWeekday(date, filter) {
-    if (date < new Date()) {
+    if (date < new Date().setHours(0, 0, 0, 0)) {
         return true
     }
 

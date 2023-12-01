@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
 import { MdLocationPin } from 'react-icons/md'
 import { ImageDisplay } from 'components/forms'
+import { copyTextById } from 'services/utils'
 
 function Spinner() {
     return (
@@ -32,12 +33,13 @@ function UserInformation ({user, bookingFormInfo}) {
             </div>
 
             <div className="form-header">                
-                <div className='form-bio'>
-                    <div style = {{display: 'flex', textAlign: 'left'}}>
+                <div className='form-bio' style = {{ width: "100%", borderRadius: "10px"}}>
+                    <p style = {{width: "100%", textAlign: "left"}}>Public Link:</p>
+                    <div style = {{display: 'flex', textAlign: 'left'}} onClick={()=>copyTextById('publink')}>
                         <MdLocationPin className='icon-sm'/>
-                        <p>{`Public Link:\n https://localhost:3000/${user.id}`}</p>
+                        <p id='publink' className="size-text-box" style={{textAlign: "left"}}>{`http://localhost:3000/bookingform/${bookingFormInfo.adminId}`}</p>
                     </div>
-                </div>
+                </div> 
             </div>
         </div>
     )
@@ -50,7 +52,8 @@ function HomePage({handleLogout}) {
     const defaultBookingFormInfo = {
         adminInfo: {
             displayName: "Default Name",
-            bio: "Default Bio",
+            bio: 'bio',
+            email: 'email',
             profileImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
             backgroundImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
             nameImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
@@ -65,7 +68,6 @@ function HomePage({handleLogout}) {
             small: "0",
             medium: "0",
             large: "0",
-            availableTimes: "9:00 AM - 5:00 PM",
             venmo: "",
             deposits: "",
         },
@@ -95,6 +97,7 @@ function HomePage({handleLogout}) {
                     console.log("No user found", data, "logging out")
                     logout()
                 }
+                console.log(data, 'data from userinfo')
                 setUserInformation(data)
             })
             .catch(error => {
@@ -116,13 +119,13 @@ function HomePage({handleLogout}) {
                             small: "5",
                             medium: "10",
                             large: "15",
-                            availableTimes: "9:00 AM - 5:00 PM",
                             venmo: "myurl",
                             deposits: "please deposit $50 to confirm booking, expect to pay an additional $200 at the end of the session"
                         },
                         adminInfo: {
                             displayName: "Default Name",
                             bio: "Default Bio",
+                            email: sid.email,
                             profileImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
                             backgroundImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
                             nameImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
@@ -139,7 +142,7 @@ function HomePage({handleLogout}) {
                             bookedMin: "60 min",
                         }
                     }
-                    alert("Hello New User! Please create a booking form")
+                    //alert("Hello New User! Please create a booking form")
                     setBookingFormInfo(defaultBookingFormInfo)
                 }
                 if (data) {

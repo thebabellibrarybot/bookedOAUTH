@@ -184,6 +184,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
                 return deletedBooking?.toJSON()
             })
     }
+
     this.putBookingFormInfoById = (userId, bookingInfo) => {
         if (!userId) {
             throw "userId cannot be null or undefined"
@@ -201,7 +202,7 @@ function UserDatabaseMongoDB(dbConnectionString) {
         )
     }
     // schedule database handling functions
-    this.addBookingSchedById = (booking) => {
+    this.addBookingSched = (booking) => {
         if (!booking) {
             throw "booking cannot be null or undefined"
         }
@@ -209,12 +210,12 @@ function UserDatabaseMongoDB(dbConnectionString) {
         return Schedule.create(booking)
         .then ((savedSchedule) => {
             return savedSchedule?.toJSON()
-        })
+        }) 
         .catch((err) => {
             console.log(err)
         })
     }
-    this.updateBookingSchedById = (id, booking) => {
+    this.putBookingScheduleById = (id, booking) => {
         if (!id) {
             throw "id cannot be null or undefined"
         }
@@ -226,6 +227,16 @@ function UserDatabaseMongoDB(dbConnectionString) {
                 return updatedBooking?.toJSON()
             })
     }
+    this.getBookingSchedById = (id) => {
+        if (!id) {
+            throw "id cannot be null or undefined"
+        }
+        return Schedule.findById(id)
+            .then((booking) => {
+                return booking?.toJSON()
+            })
+    }
+
     // add keys by id
     this.addKeysById = (id, keys) => {
         if (!id) {

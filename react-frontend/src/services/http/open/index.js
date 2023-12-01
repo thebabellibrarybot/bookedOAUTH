@@ -52,8 +52,6 @@ const putBookingProfileImages = (body, id, type) => {
         console.log(body, "no body from putBookingProfileImages")
         throw "body cannot be null or undefined"
     }
-    console.log(body, "body from putBookingProfileImages", id)
-    console.log(Object.fromEntries(body.entries()), "Object.fromEntries(body.entries())")
     let uri = CONST.uri.resources.BOOKINGPROFILEIMAGES + `/${id}` + `/${type}`
 
     return axios.put(uri, body, {
@@ -64,12 +62,38 @@ const putBookingProfileImages = (body, id, type) => {
     })
 }
 
+const putBookingFlashImages = (body, id, type) => {
+    if (!body) {
+        throw "body cannot be null or undefined"
+    }
+    let uri = CONST.uri.resources.BOOKINGFLASHIMAGES + `/${id}` + `/${type}`
+
+    return axios.put(uri, body, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
+const postScheduleFlashImages = (body, id, type) => {
+    if (!body) {
+        throw "body cannot be null or undefined"
+    }
+    let uri = CONST.uri.resources.BOOKINGFORMIMAGES + `/${id}` + `/${type}`
+
+    return axios.post(uri, body, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
+
 const getS3Image = (s3key) => {
     if (!s3key) {
-        console.log(s3key, "no s3key from getS3Image")
         throw "s3key cannot be null or undefined"
     }
-    console.log(s3key, "s3key from getS3Image")
     let uri = CONST.uri.resources.GETS3IMAGE + `/${s3key}`
 
     return axios.get(uri, {
@@ -85,5 +109,7 @@ export {
     sendBookingEmail,
     putBookingProfile,
     putBookingProfileImages,
-    getS3Image
+    getS3Image,
+    putBookingFlashImages,
+    postScheduleFlashImages
 }

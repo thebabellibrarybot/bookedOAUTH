@@ -1,4 +1,4 @@
-import { Calendar, ImageGrid, ImageDisplay } from 'components/forms'
+import { Calendar, ImageGrid, ImageDisplay, ImageFlashUploadForm } from 'components/forms'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 import { getEndTime, convertTo24Hour, formatTime } from '../services/time'
 import { validateFormFields } from 'services/utils'
 
-
 const BookingFormInfo = () => {
 
     const { id } = useParams('prac')
@@ -16,6 +15,7 @@ const BookingFormInfo = () => {
     const [messageError, setMessageError] = useState("")
     const [bookingFormInfo, setBookingFormInfo] = useState(null)
     const [userEntry, setUserEntry] = useState({
+        scheduleId: null,
         name: '',
         email: '',
         phone: '',
@@ -25,13 +25,13 @@ const BookingFormInfo = () => {
         time: '',
         message: '',
         image: [],
+        customFlash: [],
         size: '',
         waiver: false,
         timeZone: '',
         bookedString: '',
         linkBase: useParams()
     })
-
     const [imageSrc, setImageSrc] = useState('')
 
     // effect that loads the booking form info from the database
@@ -67,7 +67,6 @@ const BookingFormInfo = () => {
         fetchImageURL()
     }, [bookingFormInfo])
     
-
     // Function to handle changes in the input fields
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -138,7 +137,16 @@ const BookingFormInfo = () => {
     const handleImageCallBack = (e) => {
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
-            image: e
+            image: e.selectedFlash
+        }))
+    }
+
+    const handlecustomFlashCallBack = (e) => {
+        console.log(e, 'e from handlecustomFlashCallBack')
+        setUserEntry((prevUserEntry) => ({
+            ...prevUserEntry,
+            customFlash: e.customFlash,
+            scheduleId: e._id
         }))
     }
 
@@ -149,6 +157,8 @@ const BookingFormInfo = () => {
         })
     }
 
+
+    console.log(bookingFormInfo, 'bookingFormInfo')
     if (bookingFormInfo === null) {
         return (
             <p>loading</p>
@@ -220,13 +230,20 @@ const BookingFormInfo = () => {
                 <div className="form-line">
 
                     <h3 style = {{textAlign: "left"}}>{"What would you like to get tattooed?"}</h3>
-                    <ImageGrid customOptions = {bookingFormInfo.tattooInfo.customOptions} flashImages = {bookingFormInfo.tattooInfo.flashImages} callBack = {handleImageCallBack}/>
+                    <p>Upload Custom Image</p>
+                    <ImageFlashUploadForm maxImages={3} callBackFunction = {handlecustomFlashCallBack} type = 'customFlash' uploadType='sendflashtoschedule'/>
+                    
+                    <br></br>
+                    
+                    <p>Select From Flash</p>
+                    <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {handleImageCallBack} field = 'tattooInfo'/>
 
                     <br></br>
 
                     <RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>
 
                     <br></br>
+
                     <h3 style = {{textAlign: "left"}}>{"Any additional details?"}</h3>
                     <SizeTextBox value = {userEntry.message} callbackFunction = {handleMessage}/>
 

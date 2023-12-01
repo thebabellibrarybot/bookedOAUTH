@@ -1,78 +1,72 @@
-import React, { useEffect, useState } from 'react'
-import {FaArrowLeft, FaArrowRight} from 'react-icons/fa'
+import React, { useState } from 'react'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
+import { ImageDisplay } from '../forms'
 
 function ImageGrid(props) {
-
-    const flashImages = props.flashImages
-    const customOptions = props.customOptions
-
-    // State to track the currently displayed images and the selected image
-    const [currentImages, setCurrentImages] = useState(flashImages.slice(0, 8))
-    const [currentPage, setCurrentPage] = useState(1)
+    const flashImages = props.tattooInfo.flashImages
     const [selected, setSelected] = useState([])
-
-    useEffect(() => {
-
-    }, [flashImages,currentPage])
-
+    const [currentImages, setCurrentImages] = useState(flashImages.slice(0, 9))
+    const [currentPage, setCurrentPage] = useState(1)
+    const totalPages = Math.ceil(flashImages.length / 9) // Calculate total pages
 
     const handleNextPage = () => {
-        const start = (currentPage - 1) * 8
-        const end = Math.min(currentPage * 8, flashImages.length)
-        setCurrentImages(flashImages.slice(start, end))
-        setCurrentPage(currentPage + 1)
-        setSelected(null) // Clear the selected image when moving to the next page
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1)
+            const nextPageImages = flashImages.slice(currentPage * 9, (currentPage + 1) * 9)
+            setCurrentImages(nextPageImages)
+        }
     }
 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
-            if (flashImages.length/8 > currentPage) {
-
-                const start = (currentPage - 2) * 8
-                const end = (currentPage - 1) * 8
-                setCurrentImages(flashImages.slice(start, end))
-                setCurrentPage(currentPage - 1)
-                setSelected(null) // Clear the selected image when moving to the previous page
-            }
+            const prevPageImages = flashImages.slice((currentPage - 2) * 9, (currentPage - 1) * 9)
+            setCurrentPage(currentPage - 1)
+            setCurrentImages(prevPageImages)
         }
     }
-    
+
     const handleSelected = (imageObject) => {
-        // add the selected image to the selected array
+        let select = selected
         if (selected.includes(imageObject)) {
-            setSelected(selected.filter(item => item !== imageObject))
+            setSelected(selected.filter((item) => item !== imageObject))
+            select = selected.filter((item) => item !== imageObject)
         } else {
             setSelected([...selected, imageObject])
+            select = [...selected, imageObject]
         }
-        // Pass the selected image to the parent component
-        props.callBack(selected)
+        const newTattooInfo = {
+            ...props.tattooInfo,
+            selectedFlash: select,
+        }
+        props.callBack(newTattooInfo, 'selected', props.field) // Pass the selected images to the callback function
     }
 
     return (
         <>
             <div className="image-grid">
-                <div className='image-grid-item'>
-                    <p>Flash Selection</p>
-                </div>
                 {currentImages.map((imageObject, index) => (
                     <div
                         key={index}
                         className={selected.includes(imageObject) ? "image-grid-item-selected" : "image-grid-item"}
                         onClick={() => handleSelected(imageObject)} // Pass a function to setSelected
-                    > 
-                        <img src={imageObject.ImageURL} alt={imageObject} />
-                        <p>{imageObject.imageName ? imageObject.imageName : null}</p>
-                        <p>{imageObject.imageInfo ? imageObject.imageInfo : null}</p>
+                    >
+                        <ImageDisplay s3key={imageObject.key} />
                     </div>
                 ))}
             </div>
 
             <div className="gridpage">
-                <div onClick={handlePreviousPage} className='p'><FaArrowLeft/><p>Previous Page</p></div>
-                <div onClick={handleNextPage} className='p'><p>Next Page</p><FaArrowRight/></div>
+                <div onClick={handlePreviousPage} className="p">
+                    <FaArrowLeft />
+                    <p>Previous Page</p>
+                </div>
+                <div onClick={handleNextPage} className="p">
+                    <p>Next Page</p>
+                    <FaArrowRight />
+                </div>
             </div>
         </>
     )
 }
 
-export default ImageGrid 
+export default ImageGrid

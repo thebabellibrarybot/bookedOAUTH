@@ -9,6 +9,7 @@ const ScheduleSchema = new Schema({
     time: { type: String, required: false },
     message: { type: String, required: false },
     image: { type: Array, required: false },
+    customFlash: { type: Array, required: false},
     size: { type: String, required: false },
     waiver: { type: Boolean, required: false },
     eventLink: { type: String, required: false },

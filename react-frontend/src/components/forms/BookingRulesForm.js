@@ -4,7 +4,7 @@ import { arrayToText } from 'services/utils'
 const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
 
     console.log(tattooInfo, "tattooInfo from bookingRulesForm")
-    const { customOptions, flashImages, hourlyPrice, depositAmout, venmo, deposits, availableColors, small, medium, large, availableTimes } = tattooInfo
+    const { customOptions, flashImages, hourlyPrice, depositAmout, venmo, deposits, availableColors, small, medium, large } = tattooInfo
     const [state, setState] = useState({
         flashImages,
         hourlyPrice,
@@ -15,7 +15,6 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
         small,
         medium,
         large,
-        availableTimes,
     })
     const [isValueChanged, setIsValueChanged] = useState(
         {
@@ -28,7 +27,6 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
             small: false,
             medium: false,
             large: false,
-            availableTimes: false,
         }
     )
     const handleInputChange = (e, fieldName) => {

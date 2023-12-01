@@ -7,16 +7,14 @@ function BookingFormInfo(database) {
     const { uploadToS3 } = require("../utils/secretAWS")
     const AWS = require('aws-sdk');
 
-
+    // function to get the bookingform for public viewing
     this.getBookingByUserID = async(request, response) => {
         const id = request.params.id
 
         try {
             const token = await this.database.getUserById(id)
-            console.log(token, "token from getBookingByUserID")
             if (!token) {
                 const message = "UserBookingForm not found"
-                this.logger.info(`Bookingform not found for [${id}, ${token}]. ${message}`)
                 return response.status(CONST.httpStatus.NOT_FOUND).json({ error: message })
             } else {
                 this.database.getBookingByUserID(id)
@@ -35,7 +33,6 @@ function BookingFormInfo(database) {
             response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
         }
     }
-
     // function for a user to create their first public booking form
     this.postBookingByUserID = async(request, response) => {
 
@@ -62,7 +59,7 @@ function BookingFormInfo(database) {
             }
         )
     }
-    // backuphandler for user to create their first public booking form but a form already exsists (this is a measure to handle the default form)
+    // backuphandler for admin to create their first public booking form but a form already exsists (this is a measure to handle the default form)
     this.putBookingByUserId = async(request, response) => {
 
         const id = request.params.id
@@ -89,15 +86,15 @@ function BookingFormInfo(database) {
         )
     }
 
-    // functions for user to edit, and upload images to their public booking form
+    // functions for admin to edit, and upload images to their public booking form
     this.putBookingFormInfoById = async(request, response) => {
         try {
             console.log('starting putBookingFormInfoById')
+            console.log(request.body.calendarInfo, "request.body.calendarInfo.availableTimes")
             const oldBookingFormInfo = await this.database.getBookingByUserID(request.body.adminId)
             const id = request.body.id 
             const adminId = request.body.adminId
             if (oldBookingFormInfo) {
-                console.log(oldBookingFormInfo, "oldBookingFormInfo from putBookingFormInfoById")
                 const newBookingFormInfo = {
                     tattooInfo: {
                         customOptions: request.body.tattooInfo.customOptions?request.body.tattooInfo.customOptions:oldBookingFormInfo.tattooInfo.customOptions,
@@ -107,7 +104,6 @@ function BookingFormInfo(database) {
                         small: request.body.tattooInfo.small?request.body.tattooInfo.small:oldBookingFormInfo.tattooInfo.small,
                         medium: request.body.tattooInfo.medium?request.body.tattooInfo.medium:oldBookingFormInfo.tattooInfo.medium,
                         large: request.body.tattooInfo.large?request.body.tattooInfo.large:oldBookingFormInfo.tattooInfo.large,
-                        availableTimes: request.body.tattooInfo.availableTimes?request.body.tattooInfo.availableTimes:oldBookingFormInfo.tattooInfo.availableTimes,
                     },
                     adminInfo: {
                         displayName: request.body.adminInfo.displayName?request.body.adminInfo.displayName:oldBookingFormInfo.adminInfo.displayName,
@@ -128,10 +124,7 @@ function BookingFormInfo(database) {
                         bookedMin: request.body.calendarInfo.bookedMin?request.body.calendarInfo.bookedMin:oldBookingFormInfo.calendarInfo.bookedMin,
                     }
                 }
-                console.log(newBookingFormInfo, "newBookingFormInfo from putBookingFormInfoById")
-                console.log(id, "id from putBookingFormInfoById")
                 const data = await this.database.putBookingFormInfoById(id, newBookingFormInfo)
-                console.log(data, 'data from putBookingFormInfoById')
                 if (data) {
                     response.json(data)
                 } else {
@@ -176,23 +169,51 @@ function BookingFormInfo(database) {
                             [`adminInfo.${type}`]: image.key
                         }
                     };
-                    console.log(updateObject, "updateObject from putBookingFormInfoImagesById")
                     // Note: Assuming that putBookingFormInfoById returns a promise
                     return await this.database.putBookingFormInfoById(id, updateObject);
                 });
     
                 // Wait for all updates to complete before sending the response
                 await Promise.all(updatePromises);
-                console.log(data, "data from putBookingFormInfoImagesById")
                 response.json(data)
             } else {
-                console.log(data, "data from putBookingFormInfoImagesById")
                 response.status(CONST.httpStatus.NOT_FOUND).json({ error: "User not found" })
             }
         } catch (error) {
-            console.log(error, "error in putBookingFormInfoImagesById")
             const message = `Imposible to get user booking form: ${error}`
-            console.log(message)
+            response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
+        }
+    }
+    // this is pretty much just an image array handler instead of an image object key handler
+    this.putBookingFormFlashImagesById = async(request, response) => {
+        console.log(`Starting putBookingFormFlashImagesById`)
+        try {
+            const id = request.params.id
+            const type = request.params.type
+            const oldBookingInfo = await this.database.getBookingByUserID(id)
+            const oldImageNames = oldBookingInfo.tattooInfo.flashImages.map((image) => image.originalname);
+            const newImageNames = request.files.map((image) => image.originalname);
+
+            const filteredNewImageArray = request.files.filter((newImage) => {
+            return !oldImageNames.includes(newImage.originalname);
+            });
+            const data = await uploadToS3(filteredNewImageArray, type, id)
+            if (data) {
+                const combinedImageArray = oldBookingInfo.tattooInfo.flashImages.concat(data);
+                const updatePromises = {
+                    $set: {
+                        [`tattooInfo.${type}`]: combinedImageArray
+                    }
+                };
+                // Note: Assuming that putBookingFormInfoById returns a promise
+                await this.database.putBookingFormInfoById(id, updatePromises);
+                response.json(data)
+                }
+            else {
+                response.json(oldBookingInfo.tattooInfo.flashImages)
+            }
+        } catch (error) {
+            const message = `Imposible to get user booking form: ${error}`
             response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: message })
         }
     }
@@ -232,8 +253,6 @@ function BookingFormInfo(database) {
     }
 }
 
-
-const e = require("express")
 const database = require("../services/database")
 const bookingFormInfoController = new BookingFormInfo(database)
 

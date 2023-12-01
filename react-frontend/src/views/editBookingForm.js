@@ -1,11 +1,10 @@
-import { BasicButton, SizeTextBox } from "components/buttons"
+import { BasicButton } from "components/buttons"
 import { useBookingFormInfoContext } from "provider/bookingFormInfo"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { MdLocationPin } from "react-icons/md"
-import { CalendarForm, BookingRulesForm, PaymentRulesForm } from "components/forms"
+import { CalendarForm, BookingRulesForm, ImageFlashUploadForm, ImageGrid } from "components/forms"
 import { FaPlus, FaMinus } from "react-icons/fa"
-import { CONST } from "../config"
 import { copyTextById } from "services/utils"
 import { putBookingProfile } from "services/http/open"
 
@@ -19,22 +18,28 @@ const EditForm = () => {
     })
     const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
 
-    console.log(bookingFormInfo, "bookingFormInfo from editForm")
-
     const handleClick = (fieldName) => {
         setState({
             ...state,
             [fieldName]: !state[fieldName],
         })
     }
-
     const handleCallBack = (e, fieldName, field) => {
         setBookingFormInfo({
             ...bookingFormInfo,
             [field]: e,
         })
+        console.log(`set ${field} to:`, e)
     }
-
+    const handleFlashCallBack = (e) => {
+        setBookingFormInfo({
+            ...bookingFormInfo,
+            tattooInfo: {
+                ...bookingFormInfo.tattooInfo,
+                uploadedFlash: e,
+            }
+        })
+    }
     return (
         <div className="content">
 
@@ -43,7 +48,14 @@ const EditForm = () => {
                     <h3 style = {{width: "100%", textAlign: "left"}}>Set Flash Rules</h3>
                     {state.flashImages ?<FaMinus/> : <FaPlus/>}
                 </div>
-                {state.flashImages ? <p>form</p> : null}
+                {state.flashImages ? 
+                    <>
+                        <p>Upload new flash</p>
+                        <ImageFlashUploadForm callBackFunction={handleFlashCallBack} type = 'flashImages' maxImages={10} uploadType='editflashimage'/>
+                        <br></br>
+                        <p>Delete Flash</p>
+                        <ImageGrid tattooInfo={bookingFormInfo.tattooInfo} callBack = {handleCallBack} field = 'tattooInfo'/>
+                    </> : null}
             </div>
 
             <div className="form-line">
@@ -70,27 +82,55 @@ const EditForm = () => {
         </div>
     )
 }
+
+
+
 const EditBookingForm = ({handleLogout}) => {
 
     const navigate = useNavigate()
-    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
+    const { bookingFormInfo } = useBookingFormInfoContext()
     const [ viewForm, setViewForm ] = useState(false)
+
+    function removeSelectedItems(flashImages, selectedItems) {
+        if (!selectedItems) {
+            return flashImages
+        }
+        return flashImages.filter((image) => !selectedItems.includes(image))
+    }
+    function addSelectedItems(flashImages, selectedItems) {
+        return flashImages.concat(selectedItems)
+    }
+      
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        // mk proper data types
-        console.log(bookingFormInfo, "newBookingFormInfo from editBookingForm")
-        putBookingProfile(bookingFormInfo)
+
+        const newFlashImages = bookingFormInfo.tattooInfo.uploadedFlash ? addSelectedItems(bookingFormInfo.tattooInfo.flashImages, bookingFormInfo.tattooInfo.uploadedFlash) : bookingFormInfo.tattooInfo.flashImages
+        const newSelectedFlash = removeSelectedItems(newFlashImages, bookingFormInfo.tattooInfo.selectedFlash)
+        const newTattooInfo = {
+            ...bookingFormInfo.tattooInfo,
+            flashImages: newSelectedFlash,
+        }
+        const newBookingFormInfo = {
+            ...bookingFormInfo,
+            tattooInfo: newTattooInfo,
+        }
+
+        console.log(newBookingFormInfo, "submit to newBookingFormInfo")
+
+        putBookingProfile(newBookingFormInfo)
             .then((res) => {
                 console.log(res, "res from editBookingForm")
                 if (res.status === 200) {
-                    console.log("success")
+                    navigate("/home")
                 }
             })
             .catch((err) => {
                 console.log(err, "err from editBookingForm")
             })
     }
+
+    console.log(bookingFormInfo, "bookingFormInfo")
 
     const logout = () => {
         handleLogout()

@@ -3,18 +3,19 @@ import { arrayToText } from 'services/utils'
 
 const CalendarForm = ({ calendarInfo, callBackFunction }) => {
 
-    const { blockedWeekDates, availibleTimes, location } = calendarInfo
+    const { blockedWeekDates, availableTimes, location } = calendarInfo
     const [ state, setState ] = useState({
         blockedWeekDates,
-        availibleTimes,
+        availableTimes,
         location,
     })
     const [ isValueChanged, setIsValueChanged ] = useState({
         blockedWeekDates: false,
-        availibleTimes: false,
+        availableTimes: false,
         location: false,
     })
     const handleInputChange = (e, fieldName) => {
+        console.log(e.target.value, fieldName, 'e.target.value')
         setState({
             ...state,
             [fieldName]: e.target.value,
@@ -45,8 +46,8 @@ const CalendarForm = ({ calendarInfo, callBackFunction }) => {
                     type="text"
                     name="name"
                     placeholder='i.e. "9:00am - 5:00pm"'
-                    value={isValueChanged.availibleTimes ? arrayToText(state.availibleTimes) : ''}
-                    onChange = {(e)=>handleInputChange(e, 'availibleTimes')}
+                    value={isValueChanged.availableTimes ? arrayToText(state.availableTimes) : ''}
+                    onChange = {(e)=>handleInputChange(e, 'availableTimes')}
                 />
                 <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Appointment Address</p>
                 <input
