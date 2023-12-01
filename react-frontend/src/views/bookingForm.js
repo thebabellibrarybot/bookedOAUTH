@@ -78,11 +78,12 @@ const BookingFormInfo = () => {
 
     // prac function to handle submission of the form
     const fire = async () => {
-
         const entryObject = {
             userEntry: userEntry,
             bookingFormInfo: bookingFormInfo
         }
+        console.log(entryObject, 'entryObject')
+
         const reqObjest = {
             email: userEntry.email,
             name: userEntry.name,
@@ -95,7 +96,6 @@ const BookingFormInfo = () => {
         }
         const isValid = validateFormFields(reqObjest)
         if (!isValid) {
-
             setMessageError('')
             const res = await openController.postSchedule(entryObject)
             if (res) {
@@ -115,6 +115,8 @@ const BookingFormInfo = () => {
 
         const startTime = convertTo24Hour(e.time)
         const endTime = (getEndTime(bookingFormInfo.calendarInfo.bookedMin, e.time))
+
+        console.log(startTime, endTime, 'startTime, endTime')
 
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
@@ -142,7 +144,6 @@ const BookingFormInfo = () => {
     }
 
     const handlecustomFlashCallBack = (e) => {
-        console.log(e, 'e from handlecustomFlashCallBack')
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
             customFlash: e.customFlash,
@@ -157,8 +158,6 @@ const BookingFormInfo = () => {
         })
     }
 
-
-    console.log(bookingFormInfo, 'bookingFormInfo')
     if (bookingFormInfo === null) {
         return (
             <p>loading</p>

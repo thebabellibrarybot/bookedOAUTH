@@ -97,6 +97,7 @@ function stripTime(time) {
 }
 
 const getEndTime = (bookedMin, startTime) => {
+    console.log(bookedMin, startTime, 'bookedMin, startTime')
     const startTime24Hour = convertTo24Hour(startTime)
     const hour = Number(startTime24Hour.split(':')[0])
     const minute = Number(startTime24Hour.split(':')[1])

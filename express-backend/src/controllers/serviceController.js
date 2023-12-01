@@ -80,11 +80,18 @@ function ServiceController(database, logger) {
                     eventLink: calendarEventLink,
                     sentGmailResUrl: sentGmailResUrl,
                     }
-                    const updatedBookingSchedule = await this.database.updateBookingSchedById(eventId, addToBookingSchedule);
-                    this.logger.info(`updatedBookingSchedule added to db:${bookingInfoForm.adminInfo.displayName} by guest ${userEntry.name}`);
-                    const newBookingFormInfoObject = bookingFormInfo.calendarInfo.currentlyBooked.push(updatedBookingSchedule);
+                    const updatedBookingSchedule = await this.database.putBookingScheduleById(eventId, addToBookingSchedule);
+                    this.logger.info(`updatedBookingSchedule added to db:${bookingFormInfo.adminInfo.displayName} by guest ${userEntry.name}`);
+                    const newBookingFormInfoObject = {
+                        ...bookingFormInfo,
+                        calendarInfo: {
+                            ...bookingFormInfo.calendarInfo,
+                            currentlyBooked: [...bookingFormInfo.calendarInfo.currentlyBooked, updatedBookingSchedule]
+                        }
+                    }
                     // this will add the schedule object to the artist's array of currently booked
                     const updatedCurrentlyBooked = await this.database.putBookingByUserID(bookingFormInfo.adminId, newBookingFormInfoObject);
+                    console.log(updatedCurrentlyBooked, 'updatedCurrentlyBooked')
                     response.status(200).json({
                     message: 'successfully added new schedule entry',
                     updatedBookingSchedule,
@@ -128,7 +135,6 @@ function ServiceController(database, logger) {
                 status: 'pending'
             }
             // need to update putBookingScheduleById to take in the scheduleId
-            console.log(booking, 'booking')
             const updateScheduleObject = await this.database.putBookingScheduleById(userEntry.scheduleId, booking);
             const eventId = updateScheduleObject._id;
             if (updateScheduleObject) {
@@ -151,9 +157,15 @@ function ServiceController(database, logger) {
                     eventLink: calendarEventLink,
                     sentGmailResUrl: sentGmailResUrl,
                     }
-                    const updatedBookingSchedule = await this.database.updateBookingSchedById(eventId, addToBookingSchedule);
-                    this.logger.info(`updatedBookingSchedule added to db: ${bookingFormInfo.adminInfo.displayName} by ${userEntry.name}`);
-                    const newBookingFormInfoObject = bookingFormInfo.calendarInfo.currentlyBooked.push(updatedBookingSchedule);
+                    const updatedBookingSchedule = await this.database.putBookingScheduleById(eventId, addToBookingSchedule);
+                    this.logger.info(`updatedBookingSchedule added to db:${bookingFormInfo.adminInfo.displayName} by guest ${userEntry.name}`);
+                    const newBookingFormInfoObject = {
+                        ...bookingFormInfo,
+                        calendarInfo: {
+                            ...bookingFormInfo.calendarInfo,
+                            currentlyBooked: [...bookingFormInfo.calendarInfo.currentlyBooked, updatedBookingSchedule]
+                        }
+                    }
                     // this will add the schedule object to the artist's array of currently booked
                     const updatedCurrentlyBooked = await this.database.putBookingByUserID(bookingFormInfo.adminId, newBookingFormInfoObject);
                     response.status(200).json({

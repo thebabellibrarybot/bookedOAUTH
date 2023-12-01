@@ -89,6 +89,7 @@ function HomePage({handleLogout}) {
         let sid = localStorage.getItem("sid")
         sid = JSON.parse(sid)
         let { id, providerId } = sid
+        let email = sid.email
         console.log(sid.id, "sid.id from homePage")
 
         usersController.getUserById(id, providerId)
@@ -125,7 +126,7 @@ function HomePage({handleLogout}) {
                         adminInfo: {
                             displayName: "Default Name",
                             bio: "Default Bio",
-                            email: sid.email,
+                            email: email,
                             profileImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
                             backgroundImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
                             nameImage: "654827adc537c9ee74365b2f/profileImage/1700853575168-unnamed.jpg",
@@ -142,6 +143,7 @@ function HomePage({handleLogout}) {
                             bookedMin: "60 min",
                         }
                     }
+                    console.log(defaultBookingFormInfo, "defaultBookingFormInfo")
                     //alert("Hello New User! Please create a booking form")
                     setBookingFormInfo(defaultBookingFormInfo)
                 }
