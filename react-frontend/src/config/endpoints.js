@@ -17,7 +17,8 @@ export const uri = {
         BOOKINGPROFILE: env.API_SERVER + "/admininfo",
         BOOKINGPROFILEIMAGES: env.API_SERVER + "/admininfoimages",
         BOOKINGFLASHIMAGES: env.API_SERVER + "/adminflashimages",
-        GETS3IMAGE: env.API_SERVER + "/s3image"
+        GETS3IMAGE: env.API_SERVER + "/s3image",
+        EVENT: env.API_SERVER + "/schedule",
     },
     services: {
         OAUTH2_GOOGLE_STATUS: env.API_SERVER + "/login/google/status",

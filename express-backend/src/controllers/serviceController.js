@@ -209,8 +209,14 @@ function ServiceController(database, logger) {
 
     // view a schedule by id
     this.getScheduleById = async (request, response) => {
-        console.log(request.params.id, 'request.params.id')
         this.logger.info(`Received request to getScheduleById: ${request.params.id}`);
+        try {
+            const schedule = await this.database.getBookingSchedById(request.params.id);
+            response.status(200).json(schedule);
+        } catch (error) {
+            this.logger.error(`Error during getScheduleById: ${error}`);
+            response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
+        }
     }
 
     // accept a schedule and send confirmation email

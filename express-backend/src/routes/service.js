@@ -16,5 +16,7 @@ function errorHandler(err, req, res, next) {
 router.post("/schedule/:id", serviceController.submitUserSchedule)
 // guest sends a file to their schedule object, this will create a schedule object as it will always be sent before the schedule is created
 router.post("/bookingformimages/:id/:type", upload.array('file'), errorHandler, serviceController.postScheduleImage)
+// guest reqs a copy of their schedule event
+router.get("/schedule/:id", serviceController.getScheduleById)
 
 module.exports = router

@@ -8,6 +8,7 @@ import ImageDisplay from './displayS3Image'
 import BookingRulesForm from './BookingRulesForm'
 import CalendarForm from './CalendarForm'
 import ImageFlashUploadForm from './uploadImgFlash'
+import { ProfileUserInfo, FormUserInfo, HomeUserInfo } from './UserInfo'
 
 export {
     CredentialsLoginForm,
@@ -20,4 +21,7 @@ export {
     BookingRulesForm,
     CalendarForm,
     ImageFlashUploadForm,
+    ProfileUserInfo,
+    FormUserInfo,
+    HomeUserInfo,
 }

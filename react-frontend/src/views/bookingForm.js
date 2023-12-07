@@ -7,6 +7,7 @@ import { BasicButton, RadioButtons, SizeTextBox } from 'components/buttons'
 import { useNavigate } from 'react-router-dom'
 import { getEndTime, convertTo24Hour, formatTime } from '../services/time'
 import { validateFormFields } from 'services/utils'
+import Spinner from './Spinner'
 
 const BookingFormInfo = () => {
 
@@ -99,8 +100,7 @@ const BookingFormInfo = () => {
             setMessageError('')
             const res = await openController.postSchedule(entryObject)
             if (res) {
-                console.log(res, 'res from fire')
-                navigate(`/bookingform/${id}/success`, {state: res.data})
+                navigate(`/bookingform/${id}/${res.data._id}/success`, {state: res.data})
             } else (error) => {
                 console.log(error, 'error from fire')
                 setMessageError(error)
@@ -115,8 +115,6 @@ const BookingFormInfo = () => {
 
         const startTime = convertTo24Hour(e.time)
         const endTime = (getEndTime(bookingFormInfo.calendarInfo.bookedMin, e.time))
-
-        console.log(startTime, endTime, 'startTime, endTime')
 
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
@@ -158,9 +156,14 @@ const BookingFormInfo = () => {
         })
     }
 
+    if (!bookingFormInfo) {
+        return (
+            <Spinner/>
+        )
+    } else
     if (bookingFormInfo === null) {
         return (
-            <p>loading</p>
+            <Spinner/>
         )
     } else 
     
@@ -170,6 +173,8 @@ const BookingFormInfo = () => {
             backgroundSize: '100% auto',
             backgroundPosition: 'center',
         }
+
+        console.log(bookingFormInfo, 'bookingFormInfo')
 
         return (
 
@@ -182,6 +187,7 @@ const BookingFormInfo = () => {
                     <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay> 
                     <div className='form-bio'>
                         <h3>{bookingFormInfo.adminInfo.displayName}</h3>
+                        <p>{bookingFormInfo.adminInfo.email}</p>
                         <div style = {{display: 'flex'}}>
                             <MdLocationPin className='icon-sm'/>
                             <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
@@ -233,10 +239,13 @@ const BookingFormInfo = () => {
                     <ImageFlashUploadForm maxImages={3} callBackFunction = {handlecustomFlashCallBack} type = 'customFlash' uploadType='sendflashtoschedule'/>
                     
                     <br></br>
-                    
-                    <p>Select From Flash</p>
-                    <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {handleImageCallBack} field = 'tattooInfo'/>
 
+                    {bookingFormInfo.tattooInfo.flashImages.length > 1 ? 
+                        <>
+                            <p>Select From Flash</p>
+                            <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {null} field = 'tattooInfo'/>
+                        </> : null}
+                   
                     <br></br>
 
                     <RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>

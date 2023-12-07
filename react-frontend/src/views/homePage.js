@@ -25,6 +25,7 @@ function UserInformation ({user, bookingFormInfo}) {
                 
                 <div className='form-bio'>
                     <h3>{user.fullname.length > 1 ? user.fullname : bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
+                    <p>{bookingFormInfo.adminInfo.email}</p>
                     <div style = {{display: 'flex'}}>
                         <MdLocationPin className='icon-sm'/>
                         <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
@@ -90,7 +91,6 @@ function HomePage({handleLogout}) {
         sid = JSON.parse(sid)
         let { id, providerId } = sid
         let email = sid.email
-        console.log(sid.id, "sid.id from homePage")
 
         usersController.getUserById(id, providerId)
             .then(({data}) => {
@@ -98,7 +98,6 @@ function HomePage({handleLogout}) {
                     console.log("No user found", data, "logging out")
                     logout()
                 }
-                console.log(data, 'data from userinfo')
                 setUserInformation(data)
             })
             .catch(error => {
@@ -109,7 +108,6 @@ function HomePage({handleLogout}) {
         openController.getUserBookingInfoByID(id)
             .then(({data}) => {
                 if (!data || data === "") {
-                    console.log("No booking form found", data, "creating default booking form")
                     const defaultBookingFormInfo = {
                         adminId: sid.id,
                         tattooInfo: {
@@ -165,14 +163,12 @@ function HomePage({handleLogout}) {
 
     const style = (test, base) => {
         if (test === base) {
-            console.log(base, 'needs attention')
             return {
                 backgroundColor: "red",
                 padding: "0",
                 margin: "0"
             }
         }
-        console.log(base, test,'does not need attention')
         return {
             backgroundColor: "rgba(255, 255, 255, 0.166)",
             padding: "0",
@@ -207,6 +203,5 @@ function HomePage({handleLogout}) {
         )
     }
 } 
-
 
 export default HomePage

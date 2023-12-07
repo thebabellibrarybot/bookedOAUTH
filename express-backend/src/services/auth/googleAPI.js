@@ -167,9 +167,8 @@ function composeGmail(userEntry, bookingFormInfo, eventId) {
               <p>Booking Size: ${userEntry.size}</p>
               <p>Booking Waiver: ${userEntry.waiver}</p>            
             </ul>
-            
-            <p>To approve this appointment, please follow the <a href="http://localhost:3000/bookedevent/accept/${eventId}">link here</a>.</p>
-            <p>To decline this appointment, please follow the <a href="http://localhost:3000/bookedevent/decline/${eventId}">link here</a>.</p>
+            <p>To approve this appointment, please follow the <a href="http://localhost:3000/bookedevent/accept/${bookingFormInfo.adminId}/${eventId}">link here</a>.</p>
+            <p>To decline this appointment, please follow the <a href="http://localhost:3000/bookedevent/decline/${bookingFormInfo.adminId}/${eventId}">link here</a>.</p>
 
             <p>Alternatively, you can also copy and paste the following link into your browser:</p>
             <p>link-to-your-booking-page</p>
@@ -242,8 +241,11 @@ function composeConfirmationEmail(userEntry, bookingFormInfo, eventId) {
         <p>Booking Details: ${userEntry.message}</p>
         <p>Booking Requested for: ${userEntry.date} at ${userEntry.time}</p>
         <p>Booking Date: ${userEntry.date}</p>
+        <p>view your booking reciept here: <a href="http://localhost:3000/bookingform/${bookingFormInfo.adminId}/${eventId}/success">link here</a>.</p>
         <p>Best regards,</p>
         <p>Please make sure to pay your deposit valued at: $100 at the following venmo link to secure your booking</p>
+        <p>venmo: ${bookingFormInfo.tattooInfo.venmo}</p>
+        <a href="https://venmo.com/${bookingFormInfo.tattooInfo.venmo}">link here</a>
         <p>Your Booking System</p>
       </body>
     </html>

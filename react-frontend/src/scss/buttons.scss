@@ -14,6 +14,18 @@
         padding: 3px;
     }
 }
+.radio-row {
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-gap: 10px;
+    .radio-button {
+        padding: 0px;
+        width: 90%;
+    }
+}
 
 /* SizeTextBox.css */
 .size-text-box {

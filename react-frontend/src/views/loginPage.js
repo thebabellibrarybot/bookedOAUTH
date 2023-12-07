@@ -16,8 +16,6 @@ function Separator () {
     )
 }
 
-
-
 function LoginPage({handleLogin}) {
 
     let navigate = useNavigate()
@@ -68,10 +66,8 @@ function LoginPage({handleLogin}) {
         }
         console.log("sid", sid, data, "onSuccessLogin")
         localStorage.setItem("sid", JSON.stringify(sid))
-        console.log("Login successful, adding sid and navigating to home")
         handleLogin()
-        console.log("handleLogin")
-        navigate("/home")
+        navigate(-1)
     }
 
     const onFailLogin = function (error) {

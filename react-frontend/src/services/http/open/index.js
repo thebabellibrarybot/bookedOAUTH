@@ -13,6 +13,15 @@ const getUserBookingInfoByID = (id) => {
     return axios.get(uri, { withCredentials: true })
 }
 
+const getEventById = (id) => {
+    if (!id) {
+        console.log(id, "no id from getEventById")
+        throw "id cannot be null or undefined"
+    }
+    let uri = CONST.uri.resources.EVENT + `/${id}`
+    return axios.get(uri, { withCredentials: true })
+}
+
 const postSchedule = (schedule) => {
     if (!schedule) {
         console.log(schedule, "no schedule from postSchedule")
@@ -101,8 +110,6 @@ const getS3Image = (s3key) => {
     })
 }
 
-
-
 export {
     getUserBookingInfoByID,
     postSchedule,
@@ -111,5 +118,6 @@ export {
     putBookingProfileImages,
     getS3Image,
     putBookingFlashImages,
-    postScheduleFlashImages
+    postScheduleFlashImages,
+    getEventById,
 }

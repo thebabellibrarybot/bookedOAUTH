@@ -2,10 +2,8 @@
 import React, { useState } from 'react'
 
 const RotaryList = ({ options, callbackFunction }) => {
-
     const [selectedOptionIndex, setSelectedOptionIndex] = useState(0)
     const [selected, setSelected] = useState(null)
-    // add a function to filter currently booked times
 
     const handleScroll = (event) => {
         const delta = Math.sign(event.deltaY)
@@ -33,7 +31,7 @@ const RotaryList = ({ options, callbackFunction }) => {
     return (
         <div className="rotary-list" onWheel={handleScroll}>
             {options.slice(selectedOptionIndex, selectedOptionIndex + 5).map((option, index) => (
-                <div onClick = {()=>handleClick(option)} key={index} className={`rotary-item ${selected === option ? 'selected' : ''}`}>
+                <div onClick={() => handleClick(option)} key={index} className={`rotary-item ${selected === option ? 'selected' : 'unselected'}`}>
                     {option}
                 </div>
             ))}

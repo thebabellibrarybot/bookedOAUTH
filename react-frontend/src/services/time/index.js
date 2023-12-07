@@ -163,6 +163,14 @@ function formatTime(time, date, timeZone) {
     return formattedIsoTime
 }
 
+const timesInADay12Hour = Array.from({ length: 12 }, (_, index) => {
+    const hour = index === 0 ? 12 : index > 9 ? index : `0${index}`
+    return `${hour}:00 AM`
+}).concat(Array.from({ length: 12 }, (_, index) => {
+    const hour = index === 0 ? 12 : index > 9 ? index : `0${index}`
+    return `${hour}:00 PM`
+}))
+
 export {
     calculateAvailableTimeSlots,
     filterArrayByWeekday,
@@ -171,4 +179,5 @@ export {
     filterCurretnlyBookedByDate,
     getEndTime,
     formatTime,
+    timesInADay12Hour
 }

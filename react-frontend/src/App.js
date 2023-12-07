@@ -42,9 +42,9 @@ function App() {
                             <Route path="register" element={<RegisterPage/>} />
                             <Route path="*" element={<h1>404 Not found</h1>} />
 
-                            <Route path="bookingform/:id" element = {<BookingFormInfo handleLogin = {handleLogin} handleLogout={handleLogout}/>} />
-                            <Route path="bookedevent/accept/:bookinginfoformid/:userenteryid" element = {<AcceptEvent/>}/>
-                            <Route path="/bookingform/${id}/success" element={<ConfirmedBooking/>}></Route>
+                            <Route path="bookingform/:id" element = {<BookingFormInfo/>} />
+                            <Route path="bookedevent/accept/:bookinginfoformid/:userenteryid" element={ !loggedIn ? <Navigate to={"/login"} /> : <AcceptEvent handleLogout={handleLogout}/>}/>
+                            <Route path="bookingform/:id/:eventid/success" element={<ConfirmedBooking/>}></Route>
 
                             <Route path="home" element={ !loggedIn ? <Navigate to={"/login"} /> : <HomePage handleLogout={handleLogout}/>} />
                             <Route path="editbookingform" element = {<EditBookingForm handleLogout={handleLogout}/>}></Route>

@@ -9,6 +9,7 @@ import AcceptEvent from './AcceptEvent'
 import EditBookingForm from './editBookingForm'
 import EditProfile from './editProfile'
 import ConfirmedBooking from './ConfirmedBooking'
+import Spinner from './Spinner'
 
 
 export { 
@@ -22,4 +23,5 @@ export {
     EditBookingForm,
     EditProfile,
     ConfirmedBooking,
+    Spinner
 }

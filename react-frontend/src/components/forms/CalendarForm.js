@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
-import { arrayToText } from 'services/utils'
+import { RadioButtons } from 'components/buttons'
+import React, { useEffect, useState } from 'react'
+import { timesInADay12Hour } from 'services/time'
+import RotaryList from './RotaryList'
 
 const CalendarForm = ({ calendarInfo, callBackFunction }) => {
 
@@ -15,7 +17,6 @@ const CalendarForm = ({ calendarInfo, callBackFunction }) => {
         location: false,
     })
     const handleInputChange = (e, fieldName) => {
-        console.log(e.target.value, fieldName, 'e.target.value')
         setState({
             ...state,
             [fieldName]: e.target.value,
@@ -25,30 +26,50 @@ const CalendarForm = ({ calendarInfo, callBackFunction }) => {
             [fieldName]: true,
         })
         callBackFunction({
-            ...state,
+            ...calendarInfo,
             [fieldName]: e.target.value,
         }, fieldName, 'calendarInfo')
     }
+    const handleSelectChange = (e, fieldName) => {
+        setState({
+            ...state,
+            [fieldName]: e,
+        })
+        setIsValueChanged({
+            ...isValueChanged,
+            [fieldName]: true,
+        })
+        callBackFunction({
+            ...calendarInfo,
+            [fieldName]: e,
+        }, fieldName, 'calendarInfo')
+    }
+
+    useEffect(() => {
+        const availableTimes = `${state.availableStart}-${state.availableEnd}`
+        if (availableTimes !== 'undefined-undefined') {
+
+            callBackFunction({
+                ...calendarInfo,
+                availableTimes: availableTimes?availableTimes:calendarInfo.availableTimes,
+            }, 'availableTimes', 'calendarInfo')
+        }
+    }, [state.availableStart, state.availableEnd])
 
     return (
         <div>
-            <div className="form-grid">
+            <div>
                 <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Blocked Days</p>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder='i.e. "mon, sun"'
-                    value={isValueChanged.blockedWeekDates ? arrayToText(state.blockedWeekDates) : ''}
-                    onChange = {(e)=>handleInputChange(e, 'blockedWeekDates')}
-                />
-                <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Availible Times</p>
-                <input  
-                    type="text"
-                    name="name"
-                    placeholder='i.e. "9:00am - 5:00pm"'
-                    value={isValueChanged.availableTimes ? arrayToText(state.availableTimes) : ''}
-                    onChange = {(e)=>handleInputChange(e, 'availableTimes')}
-                />
+                <RadioButtons arr = {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']} callBack = {(e) => handleSelectChange(e, 'blockedWeekDates')} header = 'Blocked Days' radioRow = {true} selectMult = {true}/>
+            </div>
+            <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Time / Availability</p>
+            <div className='form-grid'>
+                <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Opening Time</p>
+                <p  style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Closing Time</p>
+                <RotaryList options = {timesInADay12Hour} callbackFunction = {(e) => handleSelectChange(e, 'availableStart')}/>
+                <RotaryList options = {timesInADay12Hour} callbackFunction = {(e) => handleSelectChange(e, 'availableEnd')}/>
+            </div>
+            <div className="form-grid">
                 <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Appointment Address</p>
                 <input
                     type="text"

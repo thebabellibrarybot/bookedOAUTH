@@ -104,6 +104,10 @@ function BookingFormInfo(database) {
                         small: request.body.tattooInfo.small?request.body.tattooInfo.small:oldBookingFormInfo.tattooInfo.small,
                         medium: request.body.tattooInfo.medium?request.body.tattooInfo.medium:oldBookingFormInfo.tattooInfo.medium,
                         large: request.body.tattooInfo.large?request.body.tattooInfo.large:oldBookingFormInfo.tattooInfo.large,
+                        venmo: request.body.tattooInfo.venmo?request.body.tattooInfo.venmo:oldBookingFormInfo.tattooInfo.venmo,
+                        depositeMessage: request.body.tattooInfo.depositeMessage?request.body.tattooInfo.depositeMessage:oldBookingFormInfo.tattooInfo.depositeMessage,
+                        deposits: request.body.tattooInfo.deposits?request.body.tattooInfo.deposits:oldBookingFormInfo.tattooInfo.deposits,
+                        depositAmount: request.body.tattooInfo.depositAmount?request.body.tattooInfo.depositAmount:oldBookingFormInfo.tattooInfo.depositAmount,
                     },
                     adminInfo: {
                         displayName: request.body.adminInfo.displayName?request.body.adminInfo.displayName:oldBookingFormInfo.adminInfo.displayName,
@@ -112,6 +116,7 @@ function BookingFormInfo(database) {
                         backgroundImage: request.body.adminInfo.backgroundImage?request.body.adminInfo.backgroundImage:oldBookingFormInfo.adminInfo.backgroundImage,
                         nameImage: request.body.adminInfo.nameImage?request.body.adminInfo.nameImage:oldBookingFormInfo.adminInfo.nameImage,
                         location: request.body.adminInfo.location?request.body.adminInfo.location:oldBookingFormInfo.adminInfo.location,
+                        email: request.body.adminInfo.email?request.body.adminInfo.email:oldBookingFormInfo.adminInfo.email,
                     },
                     themesInfo: {
                         themes: request.body.themesInfo.themes?request.body.themesInfo.themes:oldBookingFormInfo.themesInfo.themes,
