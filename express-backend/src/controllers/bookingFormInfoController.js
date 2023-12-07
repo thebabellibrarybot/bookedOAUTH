@@ -87,6 +87,7 @@ function BookingFormInfo(database) {
     }
 
     // functions for admin to edit, and upload images to their public booking form
+    // this is where some weird logic is for editng the json that defines the bookingFormInfoObject from the artists forms
     this.putBookingFormInfoById = async(request, response) => {
         try {
             console.log('starting putBookingFormInfoById')
@@ -108,6 +109,10 @@ function BookingFormInfo(database) {
                         depositeMessage: request.body.tattooInfo.depositeMessage?request.body.tattooInfo.depositeMessage:oldBookingFormInfo.tattooInfo.depositeMessage,
                         deposits: request.body.tattooInfo.deposits?request.body.tattooInfo.deposits:oldBookingFormInfo.tattooInfo.deposits,
                         depositAmount: request.body.tattooInfo.depositAmount?request.body.tattooInfo.depositAmount:oldBookingFormInfo.tattooInfo.depositAmount,
+                        paypal: request.body.tattooInfo.paypal?request.body.tattooInfo.paypal:oldBookingFormInfo.tattooInfo.paypal,
+                        cashapp: request.body.tattooInfo.cashapp?request.body.tattooInfo.cashapp:oldBookingFormInfo.tattooInfo.cashapp,
+                        paymentType: request.body.tattooInfo.paymentType?request.body.tattooInfo.paymentType:oldBookingFormInfo.tattooInfo.paymentType,
+
                     },
                     adminInfo: {
                         displayName: request.body.adminInfo.displayName?request.body.adminInfo.displayName:oldBookingFormInfo.adminInfo.displayName,

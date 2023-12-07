@@ -5,7 +5,8 @@ import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
 const ImageFlashUploadForm = ({ callBackFunction, type, maxImages, uploadType }) => {
     const fileInputRef = useRef(null)
     const [message, setMessage] = useState('') // Initialize the message state variable
-    const { bookingFormInfo } = useBookingFormInfoContext()
+    const { getBookingInfo } = useBookingFormInfoContext()
+    const bookingFormInfo = getBookingInfo()
 
     const uploadImages = () => {
 

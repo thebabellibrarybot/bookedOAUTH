@@ -1,20 +1,19 @@
 import React, { useState } from 'react'
 import { arrayToText } from 'services/utils'
+import { RadioButtons } from '../buttons'
 
 const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
 
-    console.log(tattooInfo, "tattooInfo from bookingRulesForm")
-    const { customOptions, flashImages, hourlyPrice, depositAmout, venmo, deposits, availableColors, small, medium, large } = tattooInfo
+    const { flashImages, hourlyPrice, depositAmout, venmo, deposits, paymentType, paypal, cashapp } = tattooInfo
     const [state, setState] = useState({
         flashImages,
         hourlyPrice,
         depositAmout,
         venmo,
         deposits,
-        availableColors,
-        small,
-        medium,
-        large,
+        paymentType,
+        paypal,
+        cashapp,
     })
     const [isValueChanged, setIsValueChanged] = useState(
         {
@@ -23,10 +22,9 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
             depositAmout: false,
             venmo: false,
             deposits: false,
-            availableColors: false,
-            small: false,
-            medium: false,
-            large: false,
+            paymentType: false,
+            paypal: false,
+            cashapp: false,
         }
     )
     const handleInputChange = (e, fieldName) => {
@@ -41,6 +39,21 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
         callBackFunction({
             ...state,
             [fieldName]: e.target.value,
+        }, fieldName, 'tattooInfo')
+    }
+
+    const handleSelectChange = (e, fieldName) => {
+        setState({
+            ...state,
+            [fieldName]: e,
+        })
+        setIsValueChanged({
+            ...isValueChanged,
+            [fieldName]: true,
+        })
+        callBackFunction({
+            ...state,
+            [fieldName]: e,
         }, fieldName, 'tattooInfo')
     }
 
@@ -71,6 +84,22 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
                     placeholder='i.e. "@username"'
                     onChange = {(e)=>handleInputChange(e, 'venmo')}
                 />
+                <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Paypal Link</p>
+                <input
+                    type="text"
+                    name="location"
+                    value={isValueChanged.paypal ? state.paypal : ''}
+                    placeholder='i.e. "paypal.me/username"'
+                    onChange = {(e)=>handleInputChange(e, 'paypal')}
+                />
+                <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Cashapp Username</p>
+                <input
+                    type="text"
+                    name="name"
+                    value={isValueChanged.cashapp ? state.cashapp : ''}
+                    placeholder='i.e. "$username"'
+                    onChange = {(e)=>handleInputChange(e, 'cashapp')}
+                />
                 <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Deposit Message</p>
                 <input
                     type="text"
@@ -79,44 +108,11 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
                     placeholder='i.e. "Deposit is required to book an appointment."'
                     onChange = {(e)=>handleInputChange(e, 'deposits')}
                 />
-                <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Available Colors</p>
-                <input  
-                    type="text"
-                    name="name"
-                    value={isValueChanged.availableColors ? arrayToText(state.availableColors) : ''}
-                    placeholder='i.e. "black, red, blue"'
-                    onChange = {(e)=>handleInputChange(e, 'availableColors')}
-                />
-                {state.small ? 
-                    <>
-                        <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Small Tattoo Size</p>
-                        <input
-                            type="text"
-                            name="location"
-                            value={isValueChanged.small ? state.small : ''}
-                            placeholder='i.e. 3" x 3"'
-                            onChange = {(e)=>handleInputChange(e, 'small')}
-                        />
-                        <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Medium Tattoo Size</p>
-                        <input
-                            type="text"
-                            name="location"
-                            value={isValueChanged.medium ? state.medium : ''}
-                            placeholder='i.e. 6" x 6"'
-                            onChange = {(e)=>handleInputChange(e, 'medium')}
-                        />
-                        <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Large Tattoo Size</p>
-                        <input
-                            type="text"
-                            name="location"
-                            value={isValueChanged.large ? state.large : ''}
-                            placeholder='i.e. 12" x 12"'
-                            onChange = {(e)=>handleInputChange(e, 'large')}
-                        />
-                    </> 
-                    : null}
-
             </div>
+
+            <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Payment Types</p>
+            <RadioButtons arr = {['Venmo', 'PayPal', 'CashApp']} callBack = {(e) => handleSelectChange(e, 'paymentType')} radioRow = {true} selectMult = {true}/>
+
         </div>
     )
 }

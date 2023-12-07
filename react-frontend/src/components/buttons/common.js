@@ -10,8 +10,6 @@ function BasicButton({IconElement, type, text, className, onClick, style}) {
         onClick(e)
     }
 
-    console.log('text', text)
-
     return (
         <button
             type={type || "button"}

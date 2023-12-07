@@ -8,39 +8,38 @@ const BookingFormInfoContext = createContext()
 // Create the provider component
 const BookingFormInfoProvider = ({ children }) => {
   
-    const [bookingFormInfo, setBookingFormInfo] = useState(null)
+    const [bookingFormInfo, setsBookingFormInfo] = useState(null)
 
-    useEffect(() => {
-        let sid = localStorage.getItem("sid")
-        sid = JSON.parse(sid)
+    const setBookingFormInfo = (bookingFormInfo) => {
+        setsBookingFormInfo(bookingFormInfo)
+        localStorage.setItem("bookingFormInfo", JSON.stringify(bookingFormInfo))
+    }
 
-        if (sid === null) {
-            console.log('pass')
-            setBookingFormInfo(null)
-        } else {
-            let { id, providerId } = sid
-            openController.getUserBookingInfoByID(id)
-                .then(({data}) => {
-                    if (!data || data === "") {
-                        console.log("No booking form found", data, "logging out")
-                    }
-                    setBookingFormInfo(data)
-                })
-                .catch(error => {
-                    console.error(error)
-                })
-        }
-    }, [])
+    const getLocalBookingFormInfo = () => {
+        return JSON.parse(localStorage.getItem("bookingFormInfo"))
+    }
 
     const getBookingInfo = () => {
+        if (bookingFormInfo) {
+            return bookingFormInfo
+        } else if (bookingFormInfo === null) {
+            const bookingFormInfoLocal = getLocalBookingFormInfo()
+            return bookingFormInfoLocal
+        }
         return bookingFormInfo
     }
+    const removeLocalBookingFormInfo = () => {
+        localStorage.removeItem("bookingFormInfo")
+    }
+
 
     // Provide the state and methods to the child components
     const contextValue = {
         bookingFormInfo,
         setBookingFormInfo,
-        getBookingInfo
+        getBookingInfo,
+        removeLocalBookingFormInfo,
+        getLocalBookingFormInfo,
     }
 
     return <BookingFormInfoContext.Provider value={contextValue}>{children}</BookingFormInfoContext.Provider>

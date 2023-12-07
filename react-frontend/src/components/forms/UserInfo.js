@@ -12,7 +12,7 @@ const ProfileUserInfo = ({user, bookingFormInfo}) => {
                 <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay>
                 
                 <div className='form-bio'>
-                    <h3>{user.fullname.length > 1 ? user.fullname : bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
+                    <h3>{bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
                     <p>{bookingFormInfo.adminInfo.email}</p>
                     <div style = {{display: 'flex'}}>
                         <MdLocationPin className='icon-sm'/>
@@ -39,7 +39,7 @@ const FormUserInfo = ({user, bookingFormInfo, headerStyle}) => {
             <div className='form-header'>
                 <p>{bookingFormInfo.adminInfo.bio}</p>
             </div>
-            
+
         </div>
     )
 }

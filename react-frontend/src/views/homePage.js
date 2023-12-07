@@ -3,9 +3,7 @@ import { LogoutButton, BasicButton } from 'components/buttons'
 import { usersController, openController } from 'services/http'
 import { useNavigate } from 'react-router-dom'
 import { useBookingFormInfoContext } from 'provider/bookingFormInfo'
-import { MdLocationPin } from 'react-icons/md'
-import { ImageDisplay } from 'components/forms'
-import { copyTextById } from 'services/utils'
+import { HomeUserInfo } from 'components/forms'
 
 function Spinner() {
     return (
@@ -16,40 +14,11 @@ function Spinner() {
     )
 }
 
-function UserInformation ({user, bookingFormInfo}) {
-    
-    return (
-        <div className='content'>
-            <div className="form-header">
-                <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay>
-                
-                <div className='form-bio'>
-                    <h3>{user.fullname.length > 1 ? user.fullname : bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
-                    <p>{bookingFormInfo.adminInfo.email}</p>
-                    <div style = {{display: 'flex'}}>
-                        <MdLocationPin className='icon-sm'/>
-                        <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="form-header">                
-                <div className='form-bio' style = {{ width: "100%", borderRadius: "10px"}}>
-                    <p style = {{width: "100%", textAlign: "left"}}>Public Link:</p>
-                    <div style = {{display: 'flex', textAlign: 'left'}} onClick={()=>copyTextById('publink')}>
-                        <MdLocationPin className='icon-sm'/>
-                        <p id='publink' className="size-text-box" style={{textAlign: "left"}}>{`http://localhost:3000/bookingform/${bookingFormInfo.adminId}`}</p>
-                    </div>
-                </div> 
-            </div>
-        </div>
-    )
-}
-
 function HomePage({handleLogout}) {
 
     const [ userInformation, setUserInformation ] = useState(null)
-    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext(null)
+    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
+
     const defaultBookingFormInfo = {
         adminInfo: {
             displayName: "Default Name",
@@ -119,7 +88,10 @@ function HomePage({handleLogout}) {
                             medium: "10",
                             large: "15",
                             venmo: "myurl",
-                            deposits: "please deposit $50 to confirm booking, expect to pay an additional $200 at the end of the session"
+                            deposits: "please deposit $50 to confirm booking, expect to pay an additional $200 at the end of the session",
+                            paypal: "myurl",
+                            cashapp: "myurl",
+                            paymentType: [],
                         },
                         adminInfo: {
                             displayName: "Default Name",
@@ -141,12 +113,9 @@ function HomePage({handleLogout}) {
                             bookedMin: "60 min",
                         }
                     }
-                    console.log(defaultBookingFormInfo, "defaultBookingFormInfo")
-                    //alert("Hello New User! Please create a booking form")
                     setBookingFormInfo(defaultBookingFormInfo)
                 }
                 if (data) {
-                    console.log("booking form found", data)
                     setBookingFormInfo(data)
                 }
             })
@@ -158,6 +127,7 @@ function HomePage({handleLogout}) {
     const logout = () => {
         handleLogout()
         localStorage.removeItem("sid")
+        localStorage.removeItem("bookingFormInfo")
         navigate("/")
     }
 
@@ -186,11 +156,11 @@ function HomePage({handleLogout}) {
 
         const profileStyle = style(bookingFormInfo.adminInfo.displayName, defaultBookingFormInfo.adminInfo.displayName)
         const bookingStyle = style(bookingFormInfo.tattooInfo.hourlyPrice, defaultBookingFormInfo.tattooInfo.hourlyPrice)
-       
+
         return (
             <div className='content'>
 
-                {bookingFormInfo ? <UserInformation user={userInformation} bookingFormInfo={bookingFormInfo}/> : <UserInformation user={userInformation} bookingFormInfo={defaultBookingFormInfo}/>}
+                {bookingFormInfo ? <HomeUserInfo user={userInformation} bookingFormInfo={bookingFormInfo}/> : <HomeUserInfo user={userInformation} bookingFormInfo={defaultBookingFormInfo}/>}
 
                 <div className='form-line'>
                     <BasicButton style = {profileStyle} className = "active-button" text = {"Edit Profile"} onClick={()=>navigate("/editprofile")}/>

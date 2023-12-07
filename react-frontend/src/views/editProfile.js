@@ -4,20 +4,18 @@ import { useBookingFormInfoContext } from "../provider/bookingFormInfo"
 import { SizeTextBox } from "../components/buttons"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ImageUploadForm, ImageDisplay } from "../components/forms"
-import { MdLocationPin } from "react-icons/md"
+import { ImageUploadForm, FormUserInfo } from "../components/forms"
 import { useEffect } from "react"
 import { openController } from "services/http"
 
 const EditProfile = ({handleLogout}) => {
 
-    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
+    const { getBookingInfo, setBookingFormInfo } = useBookingFormInfoContext()
+    const bookingFormInfo = getBookingInfo()
     const [ profileImage, setProfileImage ] = useState(null)
     const [ backgroundImage, setBackgroundImage ] = useState(null)
     const [ nameImage, setNameImage ] = useState(null)
-    const [ formView, setFormView ] = useState(false)
     const user = localStorage.getItem("sid")
-    const email = user?JSON.parse(user).email:null
     const navigate = useNavigate()
     const [isValueChanged, setIsValueChanged] = useState({
         displayName: false,
@@ -25,6 +23,8 @@ const EditProfile = ({handleLogout}) => {
         location: false,
         email: false,
     })
+
+    console.log(bookingFormInfo, "bookingFormInfo from editProfile")
 
     const handleInputChange = (e, fieldName) => {
         setBookingFormInfo({
@@ -61,18 +61,22 @@ const EditProfile = ({handleLogout}) => {
     const handleMessage = (message) => {
         setBookingFormInfo({...bookingFormInfo, adminInfo: {...bookingFormInfo.adminInfo, bio: message}})
     }
+
     const handleProfileImageUpload = (e) => {
         setBookingFormInfo({...bookingFormInfo, adminInfo: {...bookingFormInfo.adminInfo, profileImage: e[0].key}})
         setProfileImage(e[0].key)
     }
+
     const handleBackgroundImageUpload = (e) => {
         setBackgroundImage(e[0].key)
         setBookingFormInfo({...bookingFormInfo, adminInfo: {...bookingFormInfo.adminInfo, backgroundImage: e[0].key}})
     }
+
     const handleNameImageUpload = (e) => {
         setNameImage(e[0].key)
         setBookingFormInfo({...bookingFormInfo, adminInfo: {...bookingFormInfo.adminInfo, nameImage: e[0].key}})
     }
+    
     const logout = () => {
         handleLogout()
         localStorage.removeItem("sid")
@@ -111,24 +115,7 @@ const EditProfile = ({handleLogout}) => {
         return (
             <div className="content">
 
-                <div className="form-banner nameImage" style = {headerStyle}>
-                    {bookingFormInfo.adminInfo.nameImage ? <ImageDisplay s3key = {bookingFormInfo.adminInfo.nameImage}></ImageDisplay> : <h1>cant show image</h1>}
-                </div>
-                <div className="form-header">
-                    <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay> 
-                    <div className='form-bio'>
-                        <h3>{bookingFormInfo.adminInfo.displayName}</h3>
-                        <p>{email?email:null}</p>
-                        <div style = {{display: 'flex'}}>
-                            <MdLocationPin className='icon-sm'/>
-                            <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='form-header'>
-                    <p>{bookingFormInfo.adminInfo.bio}</p>
-                </div>
+                <FormUserInfo user = {user} bookingFormInfo = {bookingFormInfo} headerStyle = {headerStyle}></FormUserInfo>
 
                 <br></br>
 

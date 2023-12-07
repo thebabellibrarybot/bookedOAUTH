@@ -1,13 +1,16 @@
-import { Calendar, ImageGrid, ImageDisplay, ImageFlashUploadForm } from 'components/forms'
+import { Calendar, ImageGrid, ImageFlashUploadForm } from 'components/forms'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { openController } from 'services/http'
-import { MdLocationPin } from "react-icons/md"
-import { BasicButton, RadioButtons, SizeTextBox } from 'components/buttons'
+import { FormUserInfo } from '../components/forms'
+import { BasicButton, SizeTextBox } from 'components/buttons'
 import { useNavigate } from 'react-router-dom'
 import { getEndTime, convertTo24Hour, formatTime } from '../services/time'
 import { validateFormFields } from 'services/utils'
+import { IoLogoVenmo } from "react-icons/io5"
+import { SiCashapp, SiPaypal } from "react-icons/si"
 import Spinner from './Spinner'
+import { GrSend } from "react-icons/gr"
 
 const BookingFormInfo = () => {
 
@@ -77,7 +80,6 @@ const BookingFormInfo = () => {
         })
     }
 
-    // prac function to handle submission of the form
     const fire = async () => {
         const entryObject = {
             userEntry: userEntry,
@@ -126,18 +128,11 @@ const BookingFormInfo = () => {
             bookedString: String(e.date).split('-')[0] + `-${e.time} (${e.timeZone})`
         }))
     }
-    // i can probably normalize and these into one function 
+
     const handleSizeCallBack = (e) => {
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
             size: e
-        }))
-    }
-
-    const handleImageCallBack = (e) => {
-        setUserEntry((prevUserEntry) => ({
-            ...prevUserEntry,
-            image: e.selectedFlash
         }))
     }
 
@@ -180,24 +175,7 @@ const BookingFormInfo = () => {
 
             <div className='content'>
 
-                <div className="form-banner nameImage" style = {headerStyle}>
-                    {bookingFormInfo.adminInfo.nameImage ? <ImageDisplay s3key = {bookingFormInfo.adminInfo.nameImage}></ImageDisplay> : <h1>cant show image</h1>}
-                </div>
-                <div className="form-header">
-                    <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay> 
-                    <div className='form-bio'>
-                        <h3>{bookingFormInfo.adminInfo.displayName}</h3>
-                        <p>{bookingFormInfo.adminInfo.email}</p>
-                        <div style = {{display: 'flex'}}>
-                            <MdLocationPin className='icon-sm'/>
-                            <p>{bookingFormInfo.adminInfo.location}: {bookingFormInfo.adminInfo.locationDates}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='form-header'>
-                    <p>{bookingFormInfo.adminInfo.bio}</p>
-                </div>
+                <FormUserInfo user = {null} bookingFormInfo = {bookingFormInfo} headerStyle = {headerStyle}></FormUserInfo>
 
                 <br></br>
 
@@ -246,11 +224,7 @@ const BookingFormInfo = () => {
                             <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {null} field = 'tattooInfo'/>
                         </> : null}
                    
-                    <br></br>
-
-                    <RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>
-
-                    <br></br>
+                    {/*<RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>*/}
 
                     <h3 style = {{textAlign: "left"}}>{"Any additional details?"}</h3>
                     <SizeTextBox value = {userEntry.message} callbackFunction = {handleMessage}/>
@@ -260,7 +234,42 @@ const BookingFormInfo = () => {
                 <div className='form-line'>
                     <Calendar bookingFormInfo={bookingFormInfo} callBackTrigger={callBackTrigger}/>
                 </div>    
-                
+
+                {bookingFormInfo.tattooInfo.paymentType ?
+                    <div className='form-line'>
+                        <h3>Deposit Info</h3>
+                        <p style={{display: "flex", width: "100%", textAlign: "left", justifyContent: "left"}}>{bookingFormInfo.tattooInfo.deposits?bookingFormInfo.tattooInfo.deposits:null}</p>
+
+                        <br></br>
+
+                        {bookingFormInfo.tattooInfo.paymentType.includes('Venmo') ?
+                            <>
+                                <BasicButton IconElement={IoLogoVenmo} onClick={()=>window.open(`https://account.venmo.com/u/${bookingFormInfo.tattooInfo.venmo}`)} style={{backgroundColor: "#3D95CE", fill: "white", color: "white"}}/>
+                            </>
+                            :null}
+
+                        <br></br>
+
+                        {bookingFormInfo.tattooInfo.paymentType.includes('PayPal') ?
+                            <>
+                                <BasicButton IconElement={SiPaypal} onClick={()=>window.open(`https://paypal.com/${bookingFormInfo.tattooInfo.paypal}`)} style={{backgroundColor: "#003087", fill: "white", color: "white"}}/>
+                            </>
+                            :null}
+                            
+                        <br></br>
+
+                        {bookingFormInfo.tattooInfo.paymentType.includes('CashApp') ?
+                            <>
+                                <BasicButton IconElement={SiCashapp} onClick={()=>window.open(`https://cashapp.com/${bookingFormInfo.tattooInfo.cashapp}`)} style={{backgroundColor: "#3CB371", fill: "white", color: "white"}}/>
+                            </>
+                            :null}
+
+                        <br></br>
+
+                    
+                    </div>
+                    :null}
+
 
                 {
                 /*<div className='waiver'>
@@ -273,15 +282,15 @@ const BookingFormInfo = () => {
                     <p>onclick datetime stamp</p>
                 </div>
 
-                <div className='deposits'>
-                    <p>deposit amount and venmo link with svg</p>
-                </div>*/
+                <div className='payment'>
+                    <p>payment amount and venmo link with svg</p>
+                </div>
+                */
                 }
 
                 <div className='form-body form-line'>
                     {messageError ? <p>{messageError}</p> : null}
-                    <BasicButton text = {"Submit button"} onClick={fire} className={'active-button'} style = {{backgroundColor: "rgba(255, 255, 255, 0.166)"}}/>
-
+                    <BasicButton IconElement={GrSend} onClick={fire} className={'active-button'} style = {{backgroundColor: "rgba(255, 255, 255, 0.166)", borderRadius: "100px", width: "fit-content"}}/>
                 </div>
             </div>
         )

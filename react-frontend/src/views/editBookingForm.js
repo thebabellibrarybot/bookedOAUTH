@@ -17,8 +17,9 @@ const EditForm = () => {
         calendarRules: false,
         bookingRules: false,
     })
-    const { bookingFormInfo, setBookingFormInfo } = useBookingFormInfoContext()
-
+    const { getBookingInfo, setBookingFormInfo } = useBookingFormInfoContext()
+    const bookingFormInfo = getBookingInfo()
+    
     const handleClick = (fieldName) => {
         setState({
             ...state,
@@ -222,7 +223,8 @@ const ViewForm = ({bookingFormInfo}) => {
 const EditBookingForm = ({handleLogout}) => {
 
     const navigate = useNavigate()
-    const { bookingFormInfo } = useBookingFormInfoContext()
+    const { getBookingInfo } = useBookingFormInfoContext()
+    const bookingFormInfo = getBookingInfo()
     const [ viewForm, setViewForm ] = useState(false)
 
     function removeSelectedItems(flashImages, selectedItems) {
