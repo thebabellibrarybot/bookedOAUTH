@@ -29,7 +29,7 @@ async function createCalendarEvent(oauth2Client, event) {
       },
       (err, res) => {
         if (err) {
-          console.log(err.message);
+          console.log(err, 'err from createCalendarEvent');
           reject(`The calendar API returned an error: ${err}`);
         } else {
           resolve(res.data.htmlLink);

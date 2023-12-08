@@ -184,6 +184,7 @@ function ServiceController(database, logger) {
                 response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
             }
         } catch (error) {
+            console.log(error, 'error')
             this.logger.error(`Error during putSched: ${error}`);
             response.status(CONST.httpStatus.INTERNAL_ERROR).json({ error: 'Failed to process the request.' });
         }
