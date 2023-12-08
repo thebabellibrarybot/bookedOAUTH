@@ -4,11 +4,11 @@ import { RadioButtons } from '../buttons'
 
 const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
 
-    const { flashImages, hourlyPrice, depositAmout, venmo, deposits, paymentType, paypal, cashapp } = tattooInfo
+    const { flashImages, hourlyPrice, depositAmount, venmo, deposits, paymentType, paypal, cashapp } = tattooInfo
     const [state, setState] = useState({
         flashImages,
         hourlyPrice,
-        depositAmout,
+        depositAmount,
         venmo,
         deposits,
         paymentType,
@@ -19,7 +19,7 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
         {
             flashImages: false,
             hourlyPrice: false,
-            depositAmout: false,
+            depositAmount: false,
             venmo: false,
             deposits: false,
             paymentType: false,
@@ -72,9 +72,9 @@ const BookingRulesForm = ({ tattooInfo, callBackFunction }) => {
                 <input
                     type="text"
                     name="location"
-                    value={isValueChanged.depositAmout ? state.depositAmout : ''}
+                    value={isValueChanged.depositAmount ? state.depositAmount : ''}
                     placeholder='i.e. $50'
-                    onChange = {(e)=>handleInputChange(e, 'depositAmout')}
+                    onChange = {(e)=>handleInputChange(e, 'depositAmount')}
                 />
                 <p style={{alignItems: "center", justifyContent: "center", width: "100%", textAlign: "left"}}>Venmo Username</p>
                 <input

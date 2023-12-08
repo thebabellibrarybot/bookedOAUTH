@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 
 const AcceptEvent = ({handleLogout}) => {
 
+    console.log("AcceptEvent.js")
+
     const bookingId = useParams().id
     const eventId = useParams().eventid
     const navigate = useNavigate()

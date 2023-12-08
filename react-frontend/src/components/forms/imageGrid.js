@@ -42,7 +42,7 @@ function ImageGrid(props) {
     }
 
     return (
-        <>
+        <>  
             <div className="image-grid">
                 {currentImages.map((imageObject, index) => (
                     <div

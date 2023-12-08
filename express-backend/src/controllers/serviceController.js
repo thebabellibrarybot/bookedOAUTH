@@ -151,7 +151,7 @@ function ServiceController(database, logger) {
                 if (calendarEventLink && sentGmail && sentConfirmationEmail) {
 
                     this.logger.info(`Event created: %s ${calendarEventLink}`);
-                    this.logger.info(`Email sent: %s ${sentGmail}`);
+                    this.logger.info(`Email sent: %s ${sentGmailResUrl}`);
         
                     const addToBookingSchedule = {
                     eventLink: calendarEventLink,
@@ -168,6 +168,7 @@ function ServiceController(database, logger) {
                     }
                     // this will add the schedule object to the artist's array of currently booked
                     const updatedCurrentlyBooked = await this.database.putBookingByUserID(bookingFormInfo.adminId, newBookingFormInfoObject);
+                    this.logger.info(`updatedCurrentlyBooked added to db:${bookingFormInfo.adminInfo.displayName} by guest ${userEntry.name}`)
                     response.status(200).json({
                     message: 'successfully added new schedule entry',
                     updatedBookingSchedule,

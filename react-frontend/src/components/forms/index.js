@@ -9,6 +9,8 @@ import BookingRulesForm from './BookingRulesForm'
 import CalendarForm from './CalendarForm'
 import ImageFlashUploadForm from './uploadImgFlash'
 import { ProfileUserInfo, FormUserInfo, HomeUserInfo } from './UserInfo'
+import Receipt from './receipt'
+import PaymentLinks from './paymentLinks'
 
 export {
     CredentialsLoginForm,
@@ -24,4 +26,6 @@ export {
     ProfileUserInfo,
     FormUserInfo,
     HomeUserInfo,
+    Receipt,
+    PaymentLinks,
 }

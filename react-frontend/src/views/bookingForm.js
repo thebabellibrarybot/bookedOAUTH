@@ -102,7 +102,7 @@ const BookingFormInfo = () => {
             setMessageError('')
             const res = await openController.postSchedule(entryObject)
             if (res) {
-                navigate(`/bookingform/${id}/${res.data._id}/success`, {state: res.data})
+                navigate(`/bookingform/${id}/${res.data.updatedBookingSchedule._id}/success`)
             } else (error) => {
                 console.log(error, 'error from fire')
                 setMessageError(error)
@@ -129,10 +129,10 @@ const BookingFormInfo = () => {
         }))
     }
 
-    const handleSizeCallBack = (e) => {
+    const handleCallBackField = (e, value) => {
         setUserEntry((prevUserEntry) => ({
             ...prevUserEntry,
-            size: e
+            [value]: e.flashImages
         }))
     }
 
@@ -151,6 +151,8 @@ const BookingFormInfo = () => {
         })
     }
 
+    console.log(userEntry, 'userEntry')
+
     if (!bookingFormInfo) {
         return (
             <Spinner/>
@@ -168,8 +170,6 @@ const BookingFormInfo = () => {
             backgroundSize: '100% auto',
             backgroundPosition: 'center',
         }
-
-        console.log(bookingFormInfo, 'bookingFormInfo')
 
         return (
 
@@ -221,7 +221,7 @@ const BookingFormInfo = () => {
                     {bookingFormInfo.tattooInfo.flashImages.length > 1 ? 
                         <>
                             <p>Select From Flash</p>
-                            <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {null} field = 'tattooInfo'/>
+                            <ImageGrid tattooInfo = {bookingFormInfo.tattooInfo} callBack = {handleCallBackField} field = 'flashImages'/>
                         </> : null}
                    
                     {/*<RadioButtons arr = {[bookingFormInfo.tattooInfo.small, bookingFormInfo.tattooInfo.medium, bookingFormInfo.tattooInfo.large]} header = 'Flash Size Options' callBack = {handleSizeCallBack}/>*/}
@@ -239,7 +239,7 @@ const BookingFormInfo = () => {
                     <div className='form-line'>
                         <h3>Deposit Info</h3>
                         <p style={{display: "flex", width: "100%", textAlign: "left", justifyContent: "left"}}>{bookingFormInfo.tattooInfo.deposits?bookingFormInfo.tattooInfo.deposits:null}</p>
-
+                        <p style={{display: "flex", width: "100%", textAlign: "left", justifyContent: "left"}}>Deposit Amount: {bookingFormInfo.tattooInfo.depositAmount?bookingFormInfo.tattooInfo.depositAmount:null}</p>
                         <br></br>
 
                         {bookingFormInfo.tattooInfo.paymentType.includes('Venmo') ?

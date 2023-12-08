@@ -2,7 +2,7 @@ import ImageDisplay from "./displayS3Image"
 import { MdLocationPin } from "react-icons/md"
 import { copyTextById } from "services/utils"   
 
-const ProfileUserInfo = ({user, bookingFormInfo}) => {
+const ProfileUserInfo = ({ bookingFormInfo}) => {
         
     return (
         <div className="content">
@@ -12,7 +12,7 @@ const ProfileUserInfo = ({user, bookingFormInfo}) => {
                 <ImageDisplay s3key = {bookingFormInfo.adminInfo.profileImage}></ImageDisplay>
                 
                 <div className='form-bio'>
-                    <h3>{bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:user.fullname}</h3>
+                    <h3>{bookingFormInfo.adminInfo?bookingFormInfo.adminInfo.displayName:null}</h3>
                     <p>{bookingFormInfo.adminInfo.email}</p>
                     <div style = {{display: 'flex'}}>
                         <MdLocationPin className='icon-sm'/>
