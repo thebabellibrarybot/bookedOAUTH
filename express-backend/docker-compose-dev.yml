@@ -35,5 +35,5 @@ services:
     volumes:
       - mongo-data:/data/db
 
-volumes:
+volumes: 
   mongo-data:
