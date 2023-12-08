@@ -66,7 +66,8 @@ function RegisterPage() {
     return (            
         <div className='login-card'>
             <h2 className='mb-3'>Create account</h2>
-            {/*<RegisterForm onSubmit={registerUser}/>*/}
+
+            <RegisterForm onSubmit={registerUser}/>
 
             { isGoogleAvailable && <GoogleOAuth2Button onClick={startWithGoogle} /> }
             <LinkButton route={"/login"} previousText="Already Have an account" linkText="Sign in"/>

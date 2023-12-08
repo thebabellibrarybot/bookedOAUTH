@@ -2,6 +2,7 @@
 
 * {
     margin: 0;
+    color: rgba(40, 40, 40, 0.938)
 }
 
 .app {
@@ -51,6 +52,27 @@ p, h1 {
   }
 }
 
+.welcom-background {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  background: linear-gradient(135deg, #00B4DB, #7800b0, #00B4DB, #5f13c9);
+  background-size: 400% 400%; // Control the size of the gradient effect
+  animation: gradientAnimation 30s linear infinite; // Create an animation
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}
+
 input {
   background-color: rgba(255, 255, 255, 0.166);
   border-radius: 10px;
@@ -59,4 +81,28 @@ input {
 
 input::placeholder {
   color: #3a3a3a; /* Adjust the color as needed */
+}
+
+.form-nav {
+  display: flex;
+  position: relative;
+  justify-content: space-between;
+  width: 80%;
+  padding: 20px;
+  height: fit-content;
+  z-index: 1;
+  margin: 3%;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.166);
+  align-items: center;
+}
+.nav-item {
+  margin: 10px;
+  padding: 6px;
+  background-color: rgba(255, 255, 255, 0.166);
+  border-radius: 10px;
+}
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
 }

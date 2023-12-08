@@ -11,6 +11,7 @@ import ImageFlashUploadForm from './uploadImgFlash'
 import { ProfileUserInfo, FormUserInfo, HomeUserInfo } from './UserInfo'
 import Receipt from './receipt'
 import PaymentLinks from './paymentLinks'
+import Navbar from './Navbar'
 
 export {
     CredentialsLoginForm,
@@ -28,4 +29,5 @@ export {
     HomeUserInfo,
     Receipt,
     PaymentLinks,
+    Navbar,
 }

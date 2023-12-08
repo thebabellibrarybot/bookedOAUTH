@@ -10,7 +10,7 @@ import EditBookingForm from './editBookingForm'
 import EditProfile from './editProfile'
 import ConfirmedBooking from './ConfirmedBooking'
 import Spinner from './Spinner'
-
+import Welcome from './Welcome'
 
 export { 
     LoginPage, 
@@ -23,5 +23,6 @@ export {
     EditBookingForm,
     EditProfile,
     ConfirmedBooking,
-    Spinner
+    Spinner,
+    Welcome,
 }
