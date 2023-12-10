@@ -9,18 +9,7 @@ services:
       - "3080:3080"
     links:
       - database-mongo
-    environment:
-      - BACK_HOST=localhost
-      - BACK_PORT=3080
-      - FRONT_HOST=localhost
-      - FRONT_PORT=3000
-      - TOKEN_SECRET=
-      - GITHUB_AUTH_CLIENT_ID=
-      - GITHUB_AUTH_CLIENT_SECRET=
-      - CLIENT_GITHUB_CALLBACK_URL=http://localhost:3080/api/v1/oauth/github/callback
-      - GOOGLE_AUTH_CLIENT_ID=
-      - GOOGLE_AUTH_CLIENT_SECRET=
-      - CLIENT_GOOGLE_CALLBACK_URL=http://localhost:3080/api/v1/oauth/google/callback
+    env_file: .env
     volumes:
       - .:/home/app
       - /home/app/node_modules
