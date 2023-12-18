@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx
+    ports:
+      - 80:80
+
+  react-frontend:
+    build:
+      context: ./react-frontend
+    container_name: react-frontend
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend
+    ports:
+      - 3000:3000
+
+  express-backend:
+    build:
+      context: ./express-backend
+    container_name: express-backend
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend
+    ports:
+      - 3080:3080
