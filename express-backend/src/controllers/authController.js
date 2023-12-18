@@ -1,6 +1,4 @@
 require('dotenv').config()
-const axios = require('axios')
-const { OAuth2Client } = require('google-auth-library');
 
 function AuthController(database, logger) {
 
@@ -9,7 +7,6 @@ function AuthController(database, logger) {
 
     const CONST = require("../utils/constants")
     const bcrypt = require("bcrypt")
-    const DuplicatedEmailError = require("../utils/customErrors")
     const jwtUtil = require("../utils/jwt")
     
     this.getUserSession = (request, response) => {
@@ -119,11 +116,6 @@ function AuthController(database, logger) {
             email: "",
             password: "",
             fullname: ""
-        }
-    
-        if (err instanceof DuplicatedEmailError || err.code === MONGOOSE_DUPLICATED_EMAIL_ERROR_CODE) {
-            errors.email = "That email is already registered"
-            return errors
         }
     
         // Validations error
