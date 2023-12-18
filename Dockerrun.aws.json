@@ -12,7 +12,7 @@
                 "ecr:InitiateLayerUpload",
                 "ecr:BatchCheckLayerAvailability",
                 "ecr:PutImage"
-            ],
+            ], 
             "Resource": [
                 "arn:aws:ecr:*:123456789012:repository/*"
             ]
