@@ -1,7 +1,6 @@
 const { Schema, model, ObjectId } = require("mongoose")
 const { isEmail } = require("validator")
 const logger = require("../services/log")
-const bcrypt = require("bcrypt")
 
 const UserSchema = new Schema({
     id: { 
@@ -45,15 +44,6 @@ UserSchema.set("toJSON", {
         delete returnedObject._id
         delete returnedObject.__v
     }
-})
-
-
-UserSchema.pre("save", async function(next) {
-    if (this.password) {
-        const salt = await bcrypt.genSalt()
-        this.password = await bcrypt.hash(this.password, salt)
-    }
-    next()
 })
 
 UserSchema.post("save", function(doc, next) {

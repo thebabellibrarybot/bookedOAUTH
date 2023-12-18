@@ -1,6 +1,5 @@
 const { Schema, model, ObjectId } = require("mongoose")
 const logger = require("../services/log")
-const bcrypt = require("bcrypt")
 
 const BookingFormInfoSchema = new Schema({
     adminId: { type: String, required: true },
@@ -24,15 +23,6 @@ BookingFormInfoSchema.set("toJSON", {
         delete returnedObject._id
         delete returnedObject.__v
     }
-})
-
-
-BookingFormInfoSchema.pre("save", async function(next) {
-    if (this.password) {
-        const salt = await bcrypt.genSalt()
-        this.password = await bcrypt.hash(this.password, salt)
-    }
-    next()
 })
 
 BookingFormInfoSchema.post("save", function(doc, next) {

@@ -1,6 +1,5 @@
 const { Schema, model, ObjectId } = require("mongoose")
 const logger = require("../services/log")
-const bcrypt = require("bcrypt")
 
 const GuestKeySchema = new Schema({
     uuid: { type: String, required: true },
@@ -15,15 +14,6 @@ GuestKeySchema.set("toJSON", {
         delete returnedObject._id
         delete returnedObject.__v
     }
-})
-
-
-GuestKeySchema.pre("save", async function(next) {
-    if (this.password) {
-        const salt = await bcrypt.genSalt()
-        this.password = await bcrypt.hash(this.password, salt)
-    }
-    next()
 })
 
 GuestKeySchema.post("save", function(doc, next) {
