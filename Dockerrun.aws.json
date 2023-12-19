@@ -1,27 +1,42 @@
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1420751757000",
-            "Effect": "Allow",
-            "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:CompleteLayerUpload",
-                "ecr:UploadLayerPart",
-                "ecr:InitiateLayerUpload",
-                "ecr:BatchCheckLayerAvailability",
-                "ecr:PutImage"
-            ], 
-            "Resource": [
-                "arn:aws:ecr:*:123456789012:repository/*"
-            ]
-        },
-        {
-            "Sid": "Stmt1420751757001",
-            "Effect": "Allow",
-            "Action": "ecr:GetAuthorizationToken",
-            "Resource": "*"
-        }
+    "AWSEBDockerrunVersion": "1",
+    "containerDefinitions": [
+      {
+        "name": "bokted-backend",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend",
+        "memory": 128,
+        "portMappings": [
+          {
+            "hostPort": 3080,
+            "containerPort": 3080
+          }
+        ],
+        "essential": true
+      },
+      {
+        "name": "bokted-frontend",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend",
+        "memory": 128,
+        "portMappings": [
+          {
+            "hostPort": 3000,
+            "containerPort": 3000
+          }
+        ],
+        "essential": true
+      },
+      {
+        "name": "bokted-nginx",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx",
+        "memory": 128,
+        "portMappings": [
+          {
+            "hostPort": 80,
+            "containerPort": 80
+          }
+        ],
+        "links": ["bokted-backend", "bokted-frontend"],
+        "essential": true
+      }
     ]
-}
+  }

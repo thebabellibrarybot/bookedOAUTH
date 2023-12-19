@@ -10,13 +10,14 @@ phases:
     commands:
       - echo Build started on $(date)
       - echo Building the Docker image...
-      - docker-compose -f docker-compose-prod.yml build
+      - docker-compose --file=docker-compose-prod.yml build
 
 post_build:
   commands:
     - echo Build completed on $(date)
     - echo Pushing the Docker image...
-    - docker-compose -f docker-compose-prod.yml push
+    - docker images
+    - docker-compose --file=docker-compose-prod.yml push
 
 artifacts:
   files: 'Dockerrun.aws.json'
