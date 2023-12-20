@@ -3,7 +3,7 @@
     "containerDefinitions": [
       {
         "name": "bokted-backend",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest",
         "memory": 128,
         "portMappings": [
           {
@@ -15,7 +15,7 @@
       },
       {
         "name": "bokted-frontend",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend:latest",
         "memory": 128,
         "portMappings": [
           {
@@ -27,7 +27,7 @@
       },
       {
         "name": "bokted-nginx",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest",
         "memory": 128,
         "portMappings": [
           {
