@@ -5,7 +5,7 @@ services:
     build:
       context: ./nginx
     container_name: nginx
-    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest
     ports:
       - 80:80
 
@@ -13,7 +13,7 @@ services:
     build:
       context: ./react-frontend
     container_name: react-frontend
-    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend:latest
     ports:
       - 3000:3000
 
@@ -21,6 +21,6 @@ services:
     build:
       context: ./express-backend
     container_name: express-backend
-    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend
+    image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest
     ports:
       - 3080:3080
