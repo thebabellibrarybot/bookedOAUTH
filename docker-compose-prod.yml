@@ -8,7 +8,7 @@ services:
     image: 597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx
     ports:
       - 80:80
-
+ 
   react-frontend:
     build:
       context: ./react-frontend
