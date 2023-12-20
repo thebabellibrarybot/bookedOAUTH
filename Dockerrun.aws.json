@@ -5,7 +5,7 @@
       "name": "bokted-frontend",
       "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend:latest",
       "memory": 128,
-      "portMappings": [
+      "Ports": [
         {
           "hostPort": 3000,
           "containerPort": 3000
@@ -17,7 +17,7 @@
       "name": "bokted-backend",
       "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest",
       "memory": 128,
-      "portMappings": [
+      "Ports": [
         {
           "hostPort": 3080,
           "containerPort": 3080
@@ -29,13 +29,13 @@
       "name": "bokted-nginx",
       "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest",
       "memory": 128,
-      "portMappings": [
+      "Ports": [
         {
           "hostPort": 80,
           "containerPort": 80
         }
       ],
-      "links": ["app-api", "app-ui"],
+      "links": ["bokted-backend", "bokted-frontend"],
       "essential": true
     }
   ]
