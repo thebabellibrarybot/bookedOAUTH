@@ -10,7 +10,7 @@
             "hostPort": 3080,
             "containerPort": 3080
           }
-        ],
+        ], 
         "essential": true
       },
       {
