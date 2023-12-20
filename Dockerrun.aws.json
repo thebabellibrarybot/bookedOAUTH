@@ -11,6 +11,12 @@
             "containerPort": 3080
           }
         ], 
+        "ports": [
+          {
+            "hostPort": 3080,
+            "containerPort": 3080
+          }
+        ],
         "essential": true
       },
       {
@@ -23,6 +29,12 @@
             "containerPort": 3000
           }
         ],
+        "ports": [
+          {
+            "hostPort": 3000,
+            "containerPort": 3000
+          }
+        ],
         "essential": true
       },
       {
@@ -30,6 +42,12 @@
         "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx",
         "memory": 128,
         "portMappings": [
+          {
+            "hostPort": 80,
+            "containerPort": 80
+          }
+        ],
+        "ports": [
           {
             "hostPort": 80,
             "containerPort": 80
