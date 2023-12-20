@@ -1,46 +1,42 @@
 {
-  "AWSEBDockerrunVersion": 3,
+  "AWSEBDockerrunVersion": "1",
   "containerDefinitions": [
     {
-      "name": "backend",
-      "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest",
-      "essential": true,
-      "memory": 512,
-      "portMappings": [
-        { 
-          "containerPort": 3080,
-          "hostPort": 3080
-        }
-      ]
-    },
-    {
-      "name": "frontend",
+      "name": "bokted-frontend",
       "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend:latest",
-      "essential": true,
-      "memory": 256,
-      "portMappings": [
-        {
-          "containerPort": 3000,
-          "hostPort": 3000
-        }
-      ]
-    },
-    {
-      "name": "nginx",
-      "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest",
-      "essential": true,
       "memory": 128,
       "portMappings": [
         {
-          "containerPort": 80,
-          "hostPort": 80
+          "hostPort": 3000,
+          "containerPort": 3000
         }
       ],
-      "links": [
-        "backend",
-        "frontend"
-      ]
+      "essential": true
+    },
+    {
+      "name": "bokted-backend",
+      "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest",
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 3080,
+          "containerPort": 3080
+        }
+      ],
+      "essential": true
+    },
+    {
+      "name": "bokted-nginx",
+      "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest",
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": ["app-api", "app-ui"],
+      "essential": true
     }
   ]
 }
-  
