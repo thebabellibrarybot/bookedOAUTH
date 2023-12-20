@@ -1,9 +1,9 @@
 {
-    "AWSEBDockerrunVersion": "1",
+    "AWSEBDockerrunVersion": "2",
     "containerDefinitions": [
       {
         "name": "bokted-backend",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend:latest",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-backend",
         "memory": 128,
         "portMappings": [
           {
@@ -15,7 +15,7 @@
       },
       {
         "name": "bokted-frontend",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend:latest",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-frontend",
         "memory": 128,
         "portMappings": [
           {
@@ -27,7 +27,7 @@
       },
       {
         "name": "bokted-nginx",
-        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx:latest",
+        "image": "597268614173.dkr.ecr.us-east-1.amazonaws.com/bokted-nginx",
         "memory": 128,
         "portMappings": [
           {
